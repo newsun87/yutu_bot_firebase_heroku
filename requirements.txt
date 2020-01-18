@@ -4,6 +4,7 @@ gunicorn
 paho-mqtt
 mps-youtube==0.2.8
 youtube-dl==2020.1.15
+pyperclip
 
 
 
