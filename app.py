@@ -10,6 +10,8 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 
+import paho.mqtt.client as mqtt
+
 import os
 import json
 import random
@@ -54,6 +56,26 @@ def handle_message(event):
         event.reply_token,
         TextSendMessage(text=nlu_text))
 
+def on_connect(client, userdata, flags, rc):  #偵測MQTT連線成功事件
+    if rc == 0:
+      if flags["session present"] == 0:
+        print("subscribing")                
+    else:
+        print("connection failed ", rc)
+  
+def on_message(client, userdata, msg): # 偵測MQTT接收訊息事件
+    print(sys.getdefaultencoding()) # 打印出目前系統字符編碼    
+    mqttmsg = msg.payload.decode("utf-8") #取得MQTT訊息
+    print("收到 MQTT訊息", msg.topic+" "+ mqttmsg)
+
+
+def random_int_list(num):
+  list = range(1, num)
+  random_list = [*list]
+  random.shuffle(random_list)
+  return random_list
+
+
 def musicplay(text):
   global nlu_text, songnum, songkind, client, genUrl_state, volume_num	
   cmd = './olami-nlu-api-test.sh https://tw.olami.ai/cloudservice/api 8bd057135ec8432bb7bd2b2caa510aca 3fd33f86b57642c08fbea22f8eb9132d %s'     
@@ -77,14 +99,13 @@ def musicplay(text):
        nlu_text = temp['data']['nli'][0]['desc_obj']['result']
        print('nlu', nlu_text) 
        songname = temp['data']['nli'][0] ['semantic'][0]['slots'][0]['value'] 
-       #randomList = random_int_list(15)[0:1]       
-       #mqttmsg = songname + '~' + str(randomList[0])           
-       #print('songname ', songname)       
-       #songnum = randomList[0]
-       #songkind = songname                    
-       #client.publish("playsong", mqttmsg, 1, True) #發佈訊息
-       #print("message published")
-       #genUrl_state = 1                    
+       randomList = random_int_list(15)[0:1]       
+       mqttmsg = songname + '~' + str(randomList[0])           
+       print('songname ', songname)       
+       songnum = randomList[0]
+       songkind = songname                    
+       client.publish("playsong", mqttmsg, 1, True) #發佈訊息
+       print("message published")                           
                
     if action == 'playsinger': #播放指定歌手
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -92,8 +113,7 @@ def musicplay(text):
         singername = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
         randomList = random_int_list(15)[0:1]
         mqttmsg = singername + '~' + str(randomList[0])                                
-        print('singername ', singername)
-        #print('music_source ', music_source)          
+        print('singername ', singername)                  
         songnum = randomList[0]
         songkind = singername                                
         client.publish("playsong", mqttmsg, 1, True) #發佈訊息
@@ -149,9 +169,13 @@ def musicplay(text):
 
     print("播放NLU結果的語音......"+ nlu_text)
 
-
-
 if __name__ == "__main__":
-        app.run(debug=True, host='127.0.0.1', port=5000) 
+    client = mqtt.Client()  
+    client.on_connect = on_connect  
+    client.on_message = on_message  
+    client.connect("broker.mqttdashboard.com", 1883)  
+    client.loop_start()
+    #client.loop_forever()  
+    app.run(debug=True, host='127.0.0.1', port=5000) 
     #app.run()
     

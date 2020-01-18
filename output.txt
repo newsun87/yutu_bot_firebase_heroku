@@ -1,7 +1,7 @@
 
 ---------- Test NLU API, api=seg ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579326083514&sign=4e600e298b5f94524f5ffec10fe3349b&rq=我想要聽稻香'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579329280246&sign=d51f7331ee91b56883fd5ecf2507e18e&rq=我想要聽稻香'
 
 Here is the result:
 
@@ -9,8 +9,8 @@ Here is the result:
 
 ---------- Test NLU API, api=nli ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579326083782&sign=9fdfc40b61a15176a7a21ef493665d94&rq={"data_type":"stt","data":{"input_type":"1","text":"我想要聽稻香"}}'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579329280672&sign=f09252470bf88448fbe1f052c81cd13e&rq={"data_type":"stt","data":{"input_type":"1","text":"我想要聽稻香"}}'
 
 Here is the result:
 
-{"data":{"nli":[{"desc_obj":{"result":"稻香的歌即將為你播放","status":0},"semantic":[{"app":"smarthome","input":"我想要聽稻香","slots":[{"name":"歌名","value":"稻香"}],"modifier":["playsong"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
+{"data":{"nli":[{"desc_obj":{"result":"我也喜歡稻香這一首歌，請好好聆聽","status":0},"semantic":[{"app":"smarthome","input":"我想要聽稻香","slots":[{"name":"歌名","value":"稻香"}],"modifier":["playsong"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
