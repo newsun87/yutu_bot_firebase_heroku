@@ -15,6 +15,7 @@ import paho.mqtt.client as mqtt
 import os
 import json
 import random
+import time
 
 access_token = "6gOhUQlcO8tQkdUfaw369cspUy378X9lMbJV8nuyGYbcRDYNRJy3N9SvRXjkrbxRBtGCga9hSH6CK+pZtJzam5b4GCExt3QWIbV5MZkgcnTTWa8VemIzchGty8Jhkw2SP8gL6Q7mMD8udCaBJ+icmwdB04t89/1O/w1cDnyilFU="
 channel_secret = "8b5c6e8e8df7c5859562f60407602970"
@@ -68,13 +69,22 @@ def on_message(client, userdata, msg): # 偵測MQTT接收訊息事件
     mqttmsg = msg.payload.decode("utf-8") #取得MQTT訊息
     print("收到 MQTT訊息", msg.topic+" "+ mqttmsg)
 
-
 def random_int_list(num):
   list = range(1, num)
   random_list = [*list]
   random.shuffle(random_list)
   return random_list
 
+def genUrl(songkind, songnum):
+    print("generate url running ....")
+    time.sleep(3)  	 
+    os.system("mpsyt '/%s, x %d, q' > /dev/null"  % (songkind, songnum))                              
+    f = os.popen("xclip -selection clipboard -o")   
+    video_url = f.readlines()[0] 
+    text_message = TextSendMessage(text=video_url)
+    user_id = 'Ubf2b9f4188d45848fb4697d41c962591'     
+    line_bot_api.push_message(user_id, text_message)                                     
+    print("產生 youtube url已結束....") 
 
 def musicplay(text):
   global nlu_text, songnum, songkind, client, genUrl_state, volume_num	
@@ -105,7 +115,8 @@ def musicplay(text):
        songnum = randomList[0]
        songkind = songname                    
        client.publish("playsong", mqttmsg, 1, True) #發佈訊息
-       print("message published")                           
+       print("message published")
+       genUrl(songkind, songnum)                          
                
     if action == 'playsinger': #播放指定歌手
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -118,7 +129,7 @@ def musicplay(text):
         songkind = singername                                
         client.publish("playsong", mqttmsg, 1, True) #發佈訊息
         print("message published")
-        genUrl_state = 1         
+        genUrl(songkind, songnum)              
 
     if action == 'playpause': #播放暫停/繼續
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -135,8 +146,7 @@ def musicplay(text):
              volume_num = volume_num + 10            
              print("volume_num ", volume_num )
              volume_str = str(volume_num )+'%'
-             mqttmsg = volume_str             
-             #os.system("amixer cset numid=3 %s > /dev/null &" % volume_str) 
+             mqttmsg = volume_str            
              client.publish("volume", mqttmsg, 1, True) #發佈訊息                             
          elif volume == '小聲':
               volume_num = volume_num - 10
@@ -174,13 +184,7 @@ client.on_message = on_message
 client.connect("broker.mqttdashboard.com", 1883)  
 client.loop_start()
 
-if __name__ == "__main__":
-    #client = mqtt.Client()  
-    #client.on_connect = on_connect  
-    #client.on_message = on_message  
-    #client.connect("broker.mqttdashboard.com", 1883)  
-    #client.loop_start()
-    #client.loop_forever()  
-    app.run(debug=True, host='127.0.0.1', port=5000) 
-    #app.run()
+if __name__ == "__main__":    
+    app.run(debug=True, host='127.0.0.1', port=5000)
+    
     
