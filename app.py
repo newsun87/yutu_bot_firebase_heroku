@@ -168,13 +168,18 @@ def musicplay(text):
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
 
     print("播放NLU結果的語音......"+ nlu_text)
+client = mqtt.Client()  
+client.on_connect = on_connect  
+client.on_message = on_message  
+client.connect("broker.mqttdashboard.com", 1883)  
+client.loop_start()
 
 if __name__ == "__main__":
-    client = mqtt.Client()  
-    client.on_connect = on_connect  
-    client.on_message = on_message  
-    client.connect("broker.mqttdashboard.com", 1883)  
-    client.loop_start()
+    #client = mqtt.Client()  
+    #client.on_connect = on_connect  
+    #client.on_message = on_message  
+    #client.connect("broker.mqttdashboard.com", 1883)  
+    #client.loop_start()
     #client.loop_forever()  
     app.run(debug=True, host='127.0.0.1', port=5000) 
     #app.run()
