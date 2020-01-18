@@ -80,11 +80,8 @@ def genUrl(songkind, songnum):
     print("generate url running ....")
     time.sleep(3)  	 
     os.system("mpsyt '/%s, x %d, q' > /dev/null"  % (songkind, songnum))
-    #video_url = clipboard.get()
-    #pyperclip.copy()
-    video_url = pyperclip.paste()                            
-    #f = os.popen("xclip -selection clipboard -o")   
-    #video_url = f.readlines()[0] 
+    os.system("export DISPLAY=:0.0")    
+    video_url = pyperclip.paste()   
     text_message = TextSendMessage(text=video_url)
     user_id = 'Ubf2b9f4188d45848fb4697d41c962591'     
     line_bot_api.push_message(user_id, text_message)                                     
