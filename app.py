@@ -10,6 +10,10 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 
+import os
+import json
+import random
+
 access_token = "6gOhUQlcO8tQkdUfaw369cspUy378X9lMbJV8nuyGYbcRDYNRJy3N9SvRXjkrbxRBtGCga9hSH6CK+pZtJzam5b4GCExt3QWIbV5MZkgcnTTWa8VemIzchGty8Jhkw2SP8gL6Q7mMD8udCaBJ+icmwdB04t89/1O/w1cDnyilFU="
 channel_secret = "8b5c6e8e8df7c5859562f60407602970"
 
@@ -41,15 +45,113 @@ def callback():
 
     return 'OK'
 
-
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    global nlu_text       
+    musicplay(event.message.text)
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text))
+        TextSendMessage(text=nlu_text))
+
+def musicplay(text):
+  global nlu_text, songnum, songkind, client, genUrl_state, volume_num	
+  cmd = './olami-nlu-api-test.sh https://tw.olami.ai/cloudservice/api 8bd057135ec8432bb7bd2b2caa510aca 3fd33f86b57642c08fbea22f8eb9132d %s'     
+  output = os.popen(cmd % text) #點歌語意      
+  fp = open("output.txt", "w")  
+  fp.write(output.read()) # 文字語意理解過程結果寫入檔案      
+  fp.close()  
+  os.system('cat output.txt | grep nli | grep status > nlu_output.txt') # 文字語意理解結果輸出
+  f = open('nlu_output.txt', 'r')
+  temp = json.load(f) # json格式讀取文字語意理解結果
+  print(temp)    
+  f.close()
+  type =  temp['data']['nli'][0]['type']        
+  status = temp['data']['nli'][0]['desc_obj']['status']      
+  print('status', status)
+  print('type', type)         
+        
+  if status == 0 and type == 'smarthome':     
+    action = temp['data']['nli'][0] ['semantic'][0]['modifier'][0]
+    if action == 'playsong': #播放指定歌曲
+       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
+       print('nlu', nlu_text) 
+       songname = temp['data']['nli'][0] ['semantic'][0]['slots'][0]['value'] 
+       #randomList = random_int_list(15)[0:1]       
+       #mqttmsg = songname + '~' + str(randomList[0])           
+       #print('songname ', songname)       
+       #songnum = randomList[0]
+       #songkind = songname                    
+       #client.publish("playsong", mqttmsg, 1, True) #發佈訊息
+       #print("message published")
+       #genUrl_state = 1                    
+               
+    if action == 'playsinger': #播放指定歌手
+        nlu_text = temp['data']['nli'][0]['desc_obj']['result']
+        print('nlu', nlu_text) 
+        singername = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
+        randomList = random_int_list(15)[0:1]
+        mqttmsg = singername + '~' + str(randomList[0])                                
+        print('singername ', singername)
+        #print('music_source ', music_source)          
+        songnum = randomList[0]
+        songkind = singername                                
+        client.publish("playsong", mqttmsg, 1, True) #發佈訊息
+        print("message published")
+        genUrl_state = 1         
+
+    if action == 'playpause': #播放暫停/繼續
+        nlu_text = temp['data']['nli'][0]['desc_obj']['result']
+        print('nlu', nlu_text)
+        mqttmsg ='playpause'
+        client.publish("pause_play", mqttmsg, 1, True) #發佈訊息
+        print("message published")      
+
+    if action == 'adjust': #調整音量
+         volume = temp['data']['nli'][0] ['semantic'][0]['slots'][0]['value']
+         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
+         print('nlu', nlu_text)
+         if volume == '大聲':
+             volume_num = volume_num + 10            
+             print("volume_num ", volume_num )
+             volume_str = str(volume_num )+'%'
+             mqttmsg = volume_str             
+             #os.system("amixer cset numid=3 %s > /dev/null &" % volume_str) 
+             client.publish("volume", mqttmsg, 1, True) #發佈訊息                             
+         elif volume == '小聲':
+              volume_num = volume_num - 10
+              volume_str = str(volume_num)+'%'
+              mqttmsg = volume_str             
+              client.publish("volume", mqttmsg, 1, True) #發佈訊息              
+         elif volume == '最小聲':
+              volume_num = 50
+              volume_str = str(volume_num)+'%'             
+              mqttmsg = volume_str             
+              client.publish("volume", mqttmsg, 1, True) #發佈訊息   
+         elif volume == '最大聲':
+              volume_num = 100
+              volume_str = str(volume_num)+'%'
+              mqttmsg = volume_str               
+              client.publish("volume", mqttmsg, 1, True) #發佈訊息           
+         elif volume == '適中' or volume == '剛好':
+              volume_num = 70
+              volume_str = str(volume_num)+'%'
+              mqttmsg = volume_str               
+              client.publish("volume", mqttmsg, 1, True) #發佈訊息           
+    if action == 'shutdown':            
+      nlu_text = temp['data']['nli'][0]['desc_obj']['result']
+      os.system("sudo shutdown -h now")
+      mqttmsg = "shutdown"               
+      client.publish("shutdown", mqttmsg, 1, True) #發佈訊息                
+      
+    else:
+      nlu_text = temp['data']['nli'][0]['desc_obj']['result']
+
+    print("播放NLU結果的語音......"+ nlu_text)
+
 
 
 if __name__ == "__main__":
-    app.run()
+        app.run(debug=True, host='127.0.0.1', port=5000) 
+    #app.run()
     
