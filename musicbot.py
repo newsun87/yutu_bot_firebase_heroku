@@ -20,6 +20,8 @@ import time
 access_token = "x5LS9O8T8tfm7A2lSeiEpLx6j2u9ZUj5z6mhg1l/gO6pC2BLIJh5NCf2/mwmj88iIiS7hrn8mNAsgPU9tFCDIB3jtOCqHirPrfcjBiftdZZ2C7eQ93iPCfDwY5tAE1Qq7CSUZsDMMBgutdADEiBnGQdB04t89/1O/w1cDnyilFU="
 channel_secret = "f19d907284bd9d7332e034c3adf60b3c"
 user_id = "Ubf2b9f4188d45848fb4697d41c962591"
+volume_num = 80
+mqttmsg = str(volume_num )+'%'
 
 app = Flask(__name__)
 
@@ -172,6 +174,7 @@ client.on_connect = on_connect
 client.on_message = on_message  
 client.connect("broker.mqttdashboard.com", 1883)  
 client.loop_start()
+client.publish("volume", mqttmsg, 1, True) #發佈訊息 
 
 if __name__ == "__main__": 
        

@@ -1,16 +1,16 @@
 
 ---------- Test NLU API, api=seg ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579398493772&sign=b534c0bf8495c8e7960346723ad157c4&rq=我想要聽抒情英文的歌'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579399686075&sign=ff421858e85d2d0bc00db9002e5ab4c6&rq=音量適中'
 
 Here is the result:
 
-{"data":{"seg":"我 想 要 聽 抒情 英文 的 歌 "},"status":"ok"}
+{"data":{"seg":"音量 適 中 "},"status":"ok"}
 
 ---------- Test NLU API, api=nli ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579398494200&sign=e26ac275b569b45ce97173435476837b&rq={"data_type":"stt","data":{"input_type":"1","text":"我想要聽抒情英文的歌"}}'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579399686319&sign=6d1196bf5ef1029f5426ac8f8ed57196&rq={"data_type":"stt","data":{"input_type":"1","text":"音量適中"}}'
 
 Here is the result:
 
-{"data":{"nli":[{"desc_obj":{"result":"抒情英文的歌即將為你播放","status":0},"semantic":[{"app":"smarthome","input":"我想要聽抒情英文的歌","slots":[{"name":"歌名","value":"抒情英文"}],"modifier":["playsong"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
+{"data":{"nli":[{"desc_obj":{"result":"音量已調適中","status":0},"semantic":[{"app":"smarthome","input":"音量適中","slots":[{"name":"音量","value":"適中"}],"modifier":["adjust"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
