@@ -60,16 +60,6 @@ def handle_message(event):
         event.reply_token,
         TextSendMessage(text=nlu_text))
 
-def on_connect(client, userdata, flags, rc):  
-    print("Connected with result code "+str(rc))
-    client.subscribe("genurl", 1)    
-  
-def on_message(client, userdata, msg):
-    global user_id  
-    print(msg.topic + " " + str(msg.payload))    
-    if msg.topic == 'genurl':       
-       text_message = TextSendMessage(text=str(msg.payload))     
-       line_bot_api.push_message(user_id, text_message)
 
 def random_int_list(num):
   list = range(1, num)
@@ -168,17 +158,26 @@ def musicplay(text):
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
 
     print("播放NLU結果的語音......"+ nlu_text)
+def on_connect(client, userdata, flags, rc):  
+    print("Connected with result code "+str(rc))
+    client.subscribe("genurl", 2)    
+  
+def on_message(client, userdata, msg):
+    global user_id  
+    print(msg.topic + " " + str(msg.payload))    
+    if msg.topic == 'genurl':       
+       text_message = TextSendMessage(text=str(msg.payload))     
+       line_bot_api.push_message(user_id, text_message)
 
 client = mqtt.Client()  
 client.on_connect = on_connect  
 client.on_message = on_message  
-client.connect("broker.mqttdashboard.com", 1883)  
+client.connect("broker.mqttdashboard.com", 1883) 
+client.publish("volume", mqttmsg, 0, True) #發佈訊息 
 client.loop_start()
-client.publish("volume", mqttmsg, 1, True) #發佈訊息 
 
-if __name__ == "__main__": 
-       
-  app.run(debug=True, host='127.0.0.1', port=5000)    
+if __name__ == "__main__":           
+    app.run(debug=True, host='127.0.0.1', port=5000)    
 
     
     

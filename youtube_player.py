@@ -5,20 +5,32 @@ import paho.mqtt.client as mqtt
 import os
 import time
 import sys 
+import pyperclip
 import requests
 
-line_token =  'WWjCPbFk5lRPjuq3LsHh2ZjOQidARUgqw8LszvNX8DH'
-os.system("ps aux | grep mpsyt | awk '{print $2}' | xargs kill -9")
+line_token = 'WWjCPbFk5lRPjuq3LsHh2ZjOQidARUgqw8LszvNX8DH'
+volume_num = 80
+volume_str = str(volume_num)+'%'
+os.system("sudo amixer -M set PCM %s > /dev/null &" % volume_str) #預設音量為80%
+
+def lineNotifyMessage(token, msg):
+      headers = {
+          "Authorization": "Bearer " + token, 
+          "Content-Type" : "application/x-www-form-urlencoded"
+      }
+      payload = {'message': msg}
+      r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+      return r.status_code
   
 def on_connect(client, userdata, flags, rc):  
     print("Connected with result code " + str(rc))
     if rc == 0:
       if flags["session present"] == 0:
-        print("subscribing", 1) 
-        client.subscribe("playsong", 2)  
-        client.subscribe("volume", 2)
-        client.subscribe("pause_play", 2)
-        client.subscribe("shutdown", 2)        
+        print("subscribing", 0) 
+        client.subscribe("playsong", 0)  
+        client.subscribe("volume", 1)
+        client.subscribe("pause_play",0)
+        client.subscribe("shutdown", 0)        
                                  
     else:
         print("connection failed ", rc)    
@@ -27,7 +39,8 @@ def on_message(client, userdata, msg):
     global music_source    
     print(sys.getdefaultencoding()) # 打印出目前系統字符編碼    
     mqttmsg = msg.payload.decode("utf-8") #取得MQTT訊息
-    print("收到 MQTT訊息", msg.topic+" "+ mqttmsg)    
+    print("收到 MQTT訊息", msg.topic+" "+ mqttmsg)
+    
     if msg.topic == 'playsong':
       os.system("ps aux | grep mpsyt | awk '{print $2}' | xargs kill -9") 		      
       songkind = msg.payload.decode("utf-8").split("~", 1)[0] #取得目前播歌的資訊 
@@ -44,17 +57,7 @@ def on_message(client, userdata, msg):
     elif msg.topic == 'pause_play': 
       os.system("ps aux | grep mpsyt | awk '{print $2}' | xargs kill -9")
     elif msg.topic == 'shutdown': 
-      os.system("shutdown -h now")
-
-def lineNotifyMessage(token, msg):
-      headers = {
-          "Authorization": "Bearer " + token, 
-          "Content-Type" : "application/x-www-form-urlencoded"
-      }
-      payload = {'message': msg}
-      r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
-      return r.status_code
-      		     		                   
+      os.system("shutdown -h now")	      		     		                   
            
 def playmusic(songkind, songnum):
     global genUrl_state          
@@ -63,13 +66,14 @@ def playmusic(songkind, songnum):
 def genurl(songkind, songnum):
     print("generate url running ....")
     time.sleep(3)
-    os.system("mpsyt '/%s, x %d, q' > /dev/null"  % (songkind, songnum))       
+    os.system("mpsyt '/%s, x %d, q' > /dev/null "  % (songkind, songnum))     
     video_url = pyperclip.paste()                                        
     print("youtube URL..", video_url)
     mqttmsg = video_url
-    client.publish("genurl", mqttmsg, 1, True) #發佈訊息     
+    client.publish("genurl", mqttmsg, 0, True) #發佈訊息     
       
-lineNotifyMessage(line_token, "youtube播放程式已啟動...") 
+os.system("ps aux | grep mpsyt | awk '{print $2}' | xargs kill -9") 
+lineNotifyMessage(line_token, "youtube播放器已啟動")
 client = mqtt.Client()  
 client.on_connect = on_connect  
 client.on_message = on_message 
