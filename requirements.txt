@@ -2,9 +2,6 @@ line-bot-sdk==1.8.0
 flask==1.0.2
 gunicorn
 paho-mqtt
-mps-youtube==0.2.8
-youtube-dl==2020.1.15
-pyperclip
 
 
 
