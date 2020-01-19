@@ -16,10 +16,10 @@ import os
 import json
 import random
 import time
-import pyperclip
 
-access_token = "6gOhUQlcO8tQkdUfaw369cspUy378X9lMbJV8nuyGYbcRDYNRJy3N9SvRXjkrbxRBtGCga9hSH6CK+pZtJzam5b4GCExt3QWIbV5MZkgcnTTWa8VemIzchGty8Jhkw2SP8gL6Q7mMD8udCaBJ+icmwdB04t89/1O/w1cDnyilFU="
-channel_secret = "8b5c6e8e8df7c5859562f60407602970"
+access_token = "x5LS9O8T8tfm7A2lSeiEpLx6j2u9ZUj5z6mhg1l/gO6pC2BLIJh5NCf2/mwmj88iIiS7hrn8mNAsgPU9tFCDIB3jtOCqHirPrfcjBiftdZZ2C7eQ93iPCfDwY5tAE1Qq7CSUZsDMMBgutdADEiBnGQdB04t89/1O/w1cDnyilFU="
+channel_secret = "f19d907284bd9d7332e034c3adf60b3c"
+user_id = "Ubf2b9f4188d45848fb4697d41c962591"
 
 app = Flask(__name__)
 
@@ -58,34 +58,22 @@ def handle_message(event):
         event.reply_token,
         TextSendMessage(text=nlu_text))
 
-def on_connect(client, userdata, flags, rc):  #偵測MQTT連線成功事件
-    if rc == 0:
-      if flags["session present"] == 0:
-        print("subscribing")                
-    else:
-        print("connection failed ", rc)
+def on_connect(client, userdata, flags, rc):  
+    print("Connected with result code "+str(rc))
+    client.subscribe("genurl", 1)    
   
-def on_message(client, userdata, msg): # 偵測MQTT接收訊息事件
-    print(sys.getdefaultencoding()) # 打印出目前系統字符編碼    
-    mqttmsg = msg.payload.decode("utf-8") #取得MQTT訊息
-    print("收到 MQTT訊息", msg.topic+" "+ mqttmsg)
+def on_message(client, userdata, msg):
+    global user_id  
+    print(msg.topic + " " + str(msg.payload))    
+    if msg.topic == 'genurl':       
+       text_message = TextSendMessage(text=str(msg.payload))     
+       line_bot_api.push_message(user_id, text_message)
 
 def random_int_list(num):
   list = range(1, num)
   random_list = [*list]
   random.shuffle(random_list)
   return random_list
-
-def genUrl(songkind, songnum):
-    print("generate url running ....")
-    time.sleep(3)  	 
-    os.system("mpsyt '/%s, x %d, q' > /dev/null"  % (songkind, songnum))
-    os.system("export DISPLAY=:0.0")    
-    video_url = pyperclip.paste()   
-    text_message = TextSendMessage(text=video_url)
-    user_id = 'Ubf2b9f4188d45848fb4697d41c962591'     
-    line_bot_api.push_message(user_id, text_message)                                     
-    print("產生 youtube url已結束....") 
 
 def musicplay(text):
   global nlu_text, songnum, songkind, client, genUrl_state, volume_num	
@@ -116,8 +104,7 @@ def musicplay(text):
        songnum = randomList[0]
        songkind = songname                    
        client.publish("playsong", mqttmsg, 1, True) #發佈訊息
-       print("message published")
-       genUrl(songkind, songnum)                          
+       print("message published")                                
                
     if action == 'playsinger': #播放指定歌手
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -129,8 +116,7 @@ def musicplay(text):
         songnum = randomList[0]
         songkind = singername                                
         client.publish("playsong", mqttmsg, 1, True) #發佈訊息
-        print("message published")
-        genUrl(songkind, songnum)              
+        print("message published")                     
 
     if action == 'playpause': #播放暫停/繼續
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -168,7 +154,8 @@ def musicplay(text):
               volume_num = 70
               volume_str = str(volume_num)+'%'
               mqttmsg = volume_str               
-              client.publish("volume", mqttmsg, 1, True) #發佈訊息           
+              client.publish("volume", mqttmsg, 1, True) #發佈訊息
+           
     if action == 'shutdown':            
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
       os.system("sudo shutdown -h now")
@@ -179,13 +166,16 @@ def musicplay(text):
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
 
     print("播放NLU結果的語音......"+ nlu_text)
+
 client = mqtt.Client()  
 client.on_connect = on_connect  
 client.on_message = on_message  
 client.connect("broker.mqttdashboard.com", 1883)  
 client.loop_start()
 
-if __name__ == "__main__":    
-    app.run(debug=True, host='127.0.0.1', port=5000)
+if __name__ == "__main__": 
+       
+  app.run(debug=True, host='127.0.0.1', port=5000)    
+
     
     

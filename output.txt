@@ -1,16 +1,16 @@
 
 ---------- Test NLU API, api=seg ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579337722935&sign=c3f0c382bf2c34dd9e3b876935b0f4bc&rq=我想要聽歌手李聖傑的歌'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579398493772&sign=b534c0bf8495c8e7960346723ad157c4&rq=我想要聽抒情英文的歌'
 
 Here is the result:
 
-{"data":{"seg":"我 想 要 聽 歌手 李 聖 傑 的 歌 "},"status":"ok"}
+{"data":{"seg":"我 想 要 聽 抒情 英文 的 歌 "},"status":"ok"}
 
 ---------- Test NLU API, api=nli ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579337723312&sign=973c29c1ecb3a452cd320e67eb8017a2&rq={"data_type":"stt","data":{"input_type":"1","text":"我想要聽歌手李聖傑的歌"}}'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579398494200&sign=e26ac275b569b45ce97173435476837b&rq={"data_type":"stt","data":{"input_type":"1","text":"我想要聽抒情英文的歌"}}'
 
 Here is the result:
 
-{"data":{"nli":[{"desc_obj":{"result":"馬上為你播放李聖傑的歌","status":0},"semantic":[{"app":"smarthome","input":"我想要聽歌手李聖傑的歌","slots":[{"name":"歌手名","value":"李聖傑"}],"modifier":["playsinger"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
+{"data":{"nli":[{"desc_obj":{"result":"抒情英文的歌即將為你播放","status":0},"semantic":[{"app":"smarthome","input":"我想要聽抒情英文的歌","slots":[{"name":"歌名","value":"抒情英文"}],"modifier":["playsong"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}

@@ -1,1 +1,1 @@
-{"data":{"nli":[{"desc_obj":{"result":"馬上為你播放李聖傑的歌","status":0},"semantic":[{"app":"smarthome","input":"我想要聽歌手李聖傑的歌","slots":[{"name":"歌手名","value":"李聖傑"}],"modifier":["playsinger"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
+{"data":{"nli":[{"desc_obj":{"result":"抒情英文的歌即將為你播放","status":0},"semantic":[{"app":"smarthome","input":"我想要聽抒情英文的歌","slots":[{"name":"歌名","value":"抒情英文"}],"modifier":["playsong"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
