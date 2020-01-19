@@ -154,10 +154,10 @@ def musicplay(text):
       mqttmsg = "shutdown"               
       client.publish("shutdown", mqttmsg, 1, True) #發佈訊息                
       
-    else:
+  else:
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
 
-    print("播放NLU結果的語音......"+ nlu_text)
+  print("播放NLU結果的語音......"+ nlu_text)
 def on_connect(client, userdata, flags, rc):  
     print("Connected with result code "+str(rc))
     client.subscribe("genurl", 2)    

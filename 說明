@@ -1,2 +1,18 @@
-heroku app : music-bot-server
+開機自動執行 youtube播放程式
+1. 在/home/pi/.config/目?下新建一?名? autostart 的文件?
+內容如下：
+[Desktop Entry]
+Type=Application
+Name=testboot
+NoDisplay=true
+Exec=/home/pi/player_start.sh
+player_start.sh內容
+#!/bin/bash
+python3 /home/pi/music_bot_heroku/youtube_player.py
+
+上傳musicbot.py至heroku
+1.執行 deploy_heroku.sh
+
+heroku appname:  music-bot-server
 message api : Music_bot
+webhook URL: https://music-bot-server.herokuapp.com/callback
