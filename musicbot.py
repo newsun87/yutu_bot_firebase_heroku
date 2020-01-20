@@ -149,8 +149,7 @@ def musicplay(text):
               client.publish("volume", mqttmsg, 0, True) #發佈訊息
            
     if action == 'shutdown':            
-      nlu_text = temp['data']['nli'][0]['desc_obj']['result']
-      os.system("sudo shutdown -h now")
+      nlu_text = temp['data']['nli'][0]['desc_obj']['result']      
       mqttmsg = "shutdown"               
       client.publish("shutdown", mqttmsg, 0, True) #發佈訊息                
       

@@ -10,6 +10,8 @@ $ sudo pip3 install pyperclip // 取得url的套件
 安裝python套件
 1. $ sudo pip3 install paho-mqtt
 2. $ sudo pip3 install line-bot-sdk
+安裝heroku CLI套件
+curl https://cli-assets.heroku.com/install.sh | sh 
 開機自動執行 youtube播放程式
 1. 在/home/pi/.config/目錄下新建目錄 autostart。新建music.desktop 的文件
 內容如下：
@@ -23,8 +25,15 @@ player_start.sh內容
 python3 /home/pi/music_bot_heroku/youtube_player.py
 
 上傳musicbot.py至heroku
-1.執行 deploy_heroku.sh
-
+1. 需要requirements.txt
+line-bot-sdk==1.8.0
+flask==1.0.2
+gunicorn
+paho-mqtt
+2. 需要Procfile
+web: gunicorn musicbot:app
+3. 執行 deploy_heroku.sh
 heroku appname:  music-bot-server
+4. Line developer設定
 message api : Music_bot
 webhook URL: https://music-bot-server.herokuapp.com/callback
