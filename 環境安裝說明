@@ -12,6 +12,13 @@ $ sudo pip3 install pyperclip // 取得url的套件
 2. $ sudo pip3 install line-bot-sdk
 安裝heroku CLI套件
 curl https://cli-assets.heroku.com/install.sh | sh 
+安裝ngrok
+1. $ wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm.zip //下載套件
+2. $ unzip ngrok-stable-linux-arm.zip //解壓縮套件
+3. $ sudo mv ngrok /bin //移動執行檔
+4. crontab -e 加入一行
+@reboot ngrok http 5000
+5. $ curl -s localhost:4040/api/tunnels // 查詢對外IP   
 開機自動執行 youtube播放程式
 1. 在/home/pi/.config/目錄下新建目錄 autostart。新建music.desktop 的文件
 內容如下：

@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# -*- coding: UTF-8 -*-
+
 from flask import Flask, request, abort
 
 from linebot import (
@@ -54,12 +57,20 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    global nlu_text       
-    musicplay(event.message.text)
-    line_bot_api.reply_message(
+    global nlu_text
+    if event.message.text == 'help':
+      with open('help.txt', mode='r', encoding = "utf-8") as f:
+        content = f.read()
+        print(content)      
+        line_bot_api.reply_message(
+         event.reply_token,
+         TextSendMessage(text=content)
+               )     
+    else:             
+      musicplay(event.message.text)
+      line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=nlu_text))
-
 
 def random_int_list(num):
   list = range(1, num)

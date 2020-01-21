@@ -30,7 +30,7 @@ def on_connect(client, userdata, flags, rc):
         client.subscribe("playsong", 0)  
         client.subscribe("volume", 1)
         client.subscribe("pause_play",0)
-        client.subscribe("shutdown", 0)        
+        #client.subscribe("shutdown", 0)        
                                  
     else:
         print("connection failed ", rc)    
