@@ -106,7 +106,7 @@ def musicplay(text):
        print('songname ', songname)       
        songnum = randomList[0]
        songkind = songname                    
-       client.publish("playsong", mqttmsg, 0, True) #發佈訊息
+       client.publish("playsong", mqttmsg, 0, retain=False) #發佈訊息
        print("message published")                                
                
     if action == 'playsinger': #播放指定歌手
@@ -118,14 +118,14 @@ def musicplay(text):
         print('singername ', singername)                  
         songnum = randomList[0]
         songkind = singername                                
-        client.publish("playsong", mqttmsg, 0, True) #發佈訊息
+        client.publish("playsong", mqttmsg, 0, retain=False) #發佈訊息
         print("message published")                     
 
     if action == 'playpause': #播放暫停/繼續
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text)
         mqttmsg ='playpause'
-        client.publish("pause_play", mqttmsg, 0, True) #發佈訊息
+        client.publish("pause_play", mqttmsg, 0, retain=False) #發佈訊息
         print("message published")      
 
     if action == 'adjust': #調整音量
@@ -137,32 +137,32 @@ def musicplay(text):
              print("volume_num ", volume_num )
              volume_str = str(volume_num )+'%'
              mqttmsg = volume_str            
-             client.publish("volume", mqttmsg, 0, True) #發佈訊息                             
+             client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息                             
          elif volume == '小聲':
               volume_num = volume_num - 10
               volume_str = str(volume_num)+'%'
               mqttmsg = volume_str             
-              client.publish("volume", mqttmsg, 0, True) #發佈訊息              
+              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息              
          elif volume == '最小聲':
               volume_num = 50
               volume_str = str(volume_num)+'%'             
               mqttmsg = volume_str             
-              client.publish("volume", mqttmsg, 0, True) #發佈訊息   
+              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息   
          elif volume == '最大聲':
               volume_num = 100
               volume_str = str(volume_num)+'%'
               mqttmsg = volume_str               
-              client.publish("volume", mqttmsg, 0, True) #發佈訊息           
+              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息           
          elif volume == '適中' or volume == '剛好':
               volume_num = 70
               volume_str = str(volume_num)+'%'
               mqttmsg = volume_str               
-              client.publish("volume", mqttmsg, 0, True) #發佈訊息
+              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息
            
     if action == 'shutdown':            
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']      
       mqttmsg = "shutdown"               
-      client.publish("shutdown", mqttmsg, 0, True) #發佈訊息                
+      client.publish("shutdown", mqttmsg, 0, retain=False) #發佈訊息                
       
   else:
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -178,12 +178,13 @@ def on_message(client, userdata, msg):
     if msg.topic == 'genurl':       
        text_message = TextSendMessage(text=str(msg.payload))     
        line_bot_api.push_message(user_id, text_message)
+       
 
 client = mqtt.Client()  
 client.on_connect = on_connect  
 client.on_message = on_message  
 client.connect("broker.mqttdashboard.com", 1883) 
-client.publish("volume", mqttmsg, 0, True) #發佈訊息 
+client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息 
 client.loop_start()
 
 if __name__ == "__main__":           
