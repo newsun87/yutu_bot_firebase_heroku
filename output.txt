@@ -1,16 +1,16 @@
 
 ---------- Test NLU API, api=seg ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579418060624&sign=91d0796ff1ad0909c4c6e9beec9be271&rq=我想要聽歌手李千娜的歌'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1580381707643&sign=28c5947f90b0e34d893045388b54c128&rq=音量最小聲'
 
 Here is the result:
 
-{"data":{"seg":"我 想 要 聽 歌手 李 千 娜 的 歌 "},"status":"ok"}
+{"data":{"seg":"音量 最 小 聲 "},"status":"ok"}
 
 ---------- Test NLU API, api=nli ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1579418063970&sign=b04cb4aba04d97cf6644b0c4fb1f3452&rq={"data_type":"stt","data":{"input_type":"1","text":"我想要聽歌手李千娜的歌"}}'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1580381707979&sign=fd648819d148c13241c87720529e8350&rq={"data_type":"stt","data":{"input_type":"1","text":"音量最小聲"}}'
 
 Here is the result:
 
-{"data":{"nli":[{"desc_obj":{"result":"馬上為你播放李千娜的歌","status":0},"semantic":[{"app":"smarthome","input":"我想要聽歌手李千娜的歌","slots":[{"name":"歌手名","value":"李千娜"}],"modifier":["playsinger"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
+{"data":{"nli":[{"desc_obj":{"result":"音量已調最小聲","status":0},"semantic":[{"app":"smarthome","input":"音量最小聲","slots":[{"name":"音量","value":"最小聲"}],"modifier":["adjust"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}

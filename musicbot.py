@@ -11,6 +11,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 
+from flask import render_template
 import paho.mqtt.client as mqtt
 
 import os
@@ -20,7 +21,6 @@ import time
 
 access_token = "x5LS9O8T8tfm7A2lSeiEpLx6j2u9ZUj5z6mhg1l/gO6pC2BLIJh5NCf2/mwmj88iIiS7hrn8mNAsgPU9tFCDIB3jtOCqHirPrfcjBiftdZZ2C7eQ93iPCfDwY5tAE1Qq7CSUZsDMMBgutdADEiBnGQdB04t89/1O/w1cDnyilFU="
 channel_secret = "f19d907284bd9d7332e034c3adf60b3c"
-user_id = "Ubf2b9f4188d45848fb4697d41c962591"
 volume_num = 80
 mqttmsg = str(volume_num )+'%'
 
@@ -29,9 +29,9 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(access_token)
 handler = WebhookHandler(channel_secret)
 
-@app.route("/")
-def home():
-    return 'home OK'
+@app.route('/')
+def showPage():
+ return render_template('index.html')
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -170,12 +170,9 @@ def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe("genurl", 0)    
   
-def on_message(client, userdata, msg):
-    global user_id  
+def on_message(client, userdata, msg):      
     print(msg.topic + " " + str(msg.payload))    
-    if msg.topic == 'genurl':       
-       text_message = TextSendMessage(text=str(msg.payload))     
-       line_bot_api.push_message(user_id, text_message)
+    
        
 
 client = mqtt.Client()  

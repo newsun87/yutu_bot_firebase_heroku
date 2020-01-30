@@ -8,10 +8,7 @@ import sys
 import pyperclip
 import requests
 
-#line_token = 'WWjCPbFk5lRPjuq3LsHh2ZjOQidARUgqw8LszvNX8DH'
 youtubeurl_line_token = 'dw8xZ8HE5RK9PqG7g7X1ClBhKELzb0lyFirvM5syijw'
-volume_num = 80
-volume_str = str(volume_num)+'%'
 os.system("sudo amixer -M set PCM %s > /dev/null &" % volume_str) #預設音量為80%
 
 def lineNotifyMessage(line_token, msg):
@@ -71,9 +68,7 @@ def genurl(songkind, songnum):
     video_url = pyperclip.paste()                                                  
     print("youtube URL..", video_url)    
     time.sleep(1)
-    lineNotifyMessage(youtubeurl_line_token, video_url)    
-    #mqttmsg = video_url
-    #client.publish("genurl", mqttmsg, 0, retain=False) #發佈訊息     
+    lineNotifyMessage(youtubeurl_line_token, video_url)         
       
 os.system("ps aux | grep mpsyt | awk '{print $2}' | xargs kill -9") 
 lineNotifyMessage(youtubeurl_line_token, "youtube播放器已啟動")
