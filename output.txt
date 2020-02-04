@@ -1,16 +1,16 @@
 
 ---------- Test NLU API, api=seg ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1580776792357&sign=ac3b937235f3ea161d5c09aa5e03e9c9&rq=播放抒情國語的歌'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1580832321898&sign=468ea0c6f572a9a9ae58c205d92c0597&rq=音量最小聲'
 
 Here is the result:
 
-{"data":{"seg":"播放 抒情 國 語 的 歌 "},"status":"ok"}
+{"data":{"seg":"音量 最 小 聲 "},"status":"ok"}
 
 ---------- Test NLU API, api=nli ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1580776793268&sign=48b8463ad6d038ed6239813fdb82a37c&rq={"data_type":"stt","data":{"input_type":"1","text":"播放抒情國語的歌"}}'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1580832322540&sign=d5e29ec14ac2768ac3059870fb073787&rq={"data_type":"stt","data":{"input_type":"1","text":"音量最小聲"}}'
 
 Here is the result:
 
-{"data":{"nli":[{"desc_obj":{"result":"抒情國語的歌即將為你播放","status":0},"semantic":[{"app":"smarthome","input":"播放抒情國語的歌","slots":[{"name":"歌名","value":"抒情國語"}],"modifier":["playsong"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
+{"data":{"nli":[{"desc_obj":{"result":"音量已調最小聲","status":0},"semantic":[{"app":"smarthome","input":"音量最小聲","slots":[{"name":"音量","value":"最小聲"}],"modifier":["adjust"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}

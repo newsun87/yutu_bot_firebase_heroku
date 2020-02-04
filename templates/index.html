@@ -169,6 +169,31 @@ userId: " + profile.userId + "\npictureUrl: " + profile.pictureUrl
                         liff.closeWindow();
                     })                               
             });
+             $('#ButtonStop').click(function (){						
+                  liff.sendMessages([
+                    {
+                        type: 'text',
+                        text: '停止播放'                        
+                    }
+                  ])
+                    .then(() => {
+                        liff.closeWindow();
+                    })                               
+            }); 
+            $('#ButtonReplay').click(function (){
+			$.get("getdata", function(data){				
+				var replaymsg = data;													
+                liff.sendMessages([
+                    {
+                        type: 'text',
+                        text: "播放" + replaymsg                        
+                    }
+                  ])
+                    .then(() => {
+                        liff.closeWindow();
+                    })                               
+                }); 
+            });                      
           }             
     </script>
 </head>
@@ -188,6 +213,10 @@ userId: " + profile.userId + "\npictureUrl: " + profile.pictureUrl
             <button class="btn btn-primary" id="ButtonVolumeMinus">小聲</button>
             <button class="btn btn-primary" id="ButtonVolumePlus">大聲</button>
             <button class="btn btn-primary" id="ButtonVolumeMin">最小聲</button>
+            <img src="static/stop.png" width="32" height="32">
+            <button class="btn btn-primary" id="ButtonStop">停止</button>
+            <img src="static/replay.png" width="32" height="32">
+            <button class="btn btn-primary" id="ButtonReplay">重播</button>
            <p></p>
             <img src="static/hand.png" width="32" height="32">          			
             <button class="btn btn-primary" id="ButtonGetContext">Get Context</button>

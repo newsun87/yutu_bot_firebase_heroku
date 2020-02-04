@@ -30,6 +30,13 @@ handler = WebhookHandler(channel_secret)
 def showPage():
  return render_template('index.html')
 
+@app.route('/getdata', methods=['GET', 'POST']) 
+def getData():
+  with open('record.txt','r', encoding = "utf-8") as fileobj:
+    word = fileobj.read().strip('\n')
+    print(word)  
+  return word
+
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -46,7 +53,6 @@ def callback():
     except InvalidSignatureError:
         print("Invalid signature. Please check your channel access token/channel secret.")
         abort(400)
-
     return 'OK'
 
 # 處理訊息
@@ -59,8 +65,7 @@ def handle_message(event):
         print(content)      
         line_bot_api.reply_message(
          event.reply_token,
-         TextSendMessage(text=content)
-               )     
+         TextSendMessage(text=content))     
     else:             
       musicplay(event.message.text)
       line_bot_api.reply_message(
@@ -100,7 +105,9 @@ def musicplay(text):
        mqttmsg = songname + '~' + str(randomList[0])           
        print('songname ', songname)       
        songnum = randomList[0]
-       songkind = songname                    
+       songkind = songname
+       with open('record.txt','w', encoding = "utf-8") as fileobj:
+         word = fileobj.write(songname)                    
        client.publish("playsong", mqttmsg, 0, retain=False) #發佈訊息
        print("message published")                                
                
@@ -112,7 +119,9 @@ def musicplay(text):
         mqttmsg = singername + '~' + str(randomList[0])                                
         print('singername ', singername)                  
         songnum = randomList[0]
-        songkind = singername                                
+        songkind = singername
+        with open('record.txt','w', encoding = "utf-8") as fileobj:
+         word = fileobj.write(singername)                                 
         client.publish("playsong", mqttmsg, 0, retain=False) #發佈訊息
         print("message published")                     
 
@@ -168,9 +177,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("genurl", 0)    
   
 def on_message(client, userdata, msg):      
-    print(msg.topic + " " + str(msg.payload))    
-    
-       
+    print(msg.topic + " " + str(msg.payload))         
 
 client = mqtt.Client()  
 client.on_connect = on_connect  
@@ -180,7 +187,7 @@ client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息
 client.loop_start()
 
 if __name__ == "__main__":           
-    app.run(debug=True, host='127.0.0.1', port=5000)    
+    app.run(debug=True, host='0.0.0.0', port=5000)    
 
     
     
