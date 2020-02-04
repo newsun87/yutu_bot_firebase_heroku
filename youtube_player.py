@@ -9,6 +9,7 @@ import pyperclip
 import requests
 
 youtubeurl_line_token = 'dw8xZ8HE5RK9PqG7g7X1ClBhKELzb0lyFirvM5syijw'
+volume_str = 80
 os.system("sudo amixer -M set PCM %s > /dev/null &" % volume_str) #預設音量為80%
 
 def lineNotifyMessage(line_token, msg):
@@ -26,7 +27,7 @@ def on_connect(client, userdata, flags, rc):
       if flags["session present"] == 0:
         print("subscribing", 0) 
         client.subscribe("playsong", 0)  
-        client.subscribe("volume", 1)
+        client.subscribe("volume", 0)
         client.subscribe("pause_play",0)
         #client.subscribe("shutdown", 0)        
                                  

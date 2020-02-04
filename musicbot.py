@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
 from flask import Flask, request, abort
@@ -7,9 +6,7 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 from linebot.exceptions import (InvalidSignatureError)
-from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
-)
+from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
 
 from flask import render_template
 import paho.mqtt.client as mqtt

@@ -118,14 +118,25 @@ userId: " + profile.userId + "\npictureUrl: " + profile.pictureUrl
                   liff.sendMessages([
                     {
                         type: 'text',
-                        text: '音'                        
+                        text: 'help'                        
                     }
                   ])
                     .then(() => {
                         liff.closeWindow();
                     })                               
             });
-            $('#ButtonVolumeMin').click(function (){						
+            $('#ButtonVolumeMiddle').click(function (){						
+                  liff.sendMessages([
+                    {
+                        type: 'text',
+                        text: '音量適中'                        
+                    }
+                  ])
+                    .then(() => {
+                        liff.closeWindow();
+                    })                               
+            });
+            $('#ButtonVolumeMinus').click(function (){						
                   liff.sendMessages([
                     {
                         type: 'text',
@@ -136,7 +147,7 @@ userId: " + profile.userId + "\npictureUrl: " + profile.pictureUrl
                         liff.closeWindow();
                     })                               
             });
-            $('#ButtonVolumeMax').click(function (){						
+            $('#ButtonVolumePlus').click(function (){						
                   liff.sendMessages([
                     {
                         type: 'text',
@@ -147,7 +158,7 @@ userId: " + profile.userId + "\npictureUrl: " + profile.pictureUrl
                         liff.closeWindow();
                     })                               
             });
-            $('#ButtonVolumeMostmin').click(function (){						
+            $('#ButtonVolumeMin').click(function (){						
                   liff.sendMessages([
                     {
                         type: 'text',
@@ -165,16 +176,20 @@ userId: " + profile.userId + "\npictureUrl: " + profile.pictureUrl
     <div class="row">
 		
         <div id="MainDiv" class="col-md-6" style="margin:5px">
-			<label>喜歡的歌名:</label>
-            <input class="form-control" type="text" id="songname">            
-            <label>喜歡的歌手:</label>
-            <input class="form-control" type="text" id="singername">
-            <button class="btn btn-primary" id="ButtonOrderSongname">歌名</button>
+			<img src="static/song.png" width="32" height="32">
+			<input type="text" id="songname">						
+            <button class="btn btn-primary" id="ButtonOrderSongname" >歌名</button> 
+            <img src="static/singer.png" width="32" height="32">           
+            <input type="text" id="singername">
             <button class="btn btn-primary" id="ButtonOrderSingername">歌手</button><br>
-            <button class="btn btn-primary" id="ButtonVolumeMin">音量小聲</button>
-            <button class="btn btn-primary" id="ButtonVolumeMax">音量大聲</button>
-            <button class="btn btn-primary" id="ButtonVolumeMostmin">音量最小聲</button>
-           <p></p>          			
+                      
+            <img src="static/volume.png" width="42" height="42">
+            <button class="btn btn-primary" id="ButtonVolumeMiddle">適中</button>
+            <button class="btn btn-primary" id="ButtonVolumeMinus">小聲</button>
+            <button class="btn btn-primary" id="ButtonVolumePlus">大聲</button>
+            <button class="btn btn-primary" id="ButtonVolumeMin">最小聲</button>
+           <p></p>
+            <img src="static/hand.png" width="32" height="32">          			
             <button class="btn btn-primary" id="ButtonGetContext">Get Context</button>
             <button class="btn btn-primary" id="ButtonScan">掃描 QR Code</button>
             <button class="btn btn-primary" id="ButtonGetProfile">Get User Profile</button> 
