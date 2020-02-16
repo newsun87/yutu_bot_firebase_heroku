@@ -8,13 +8,14 @@ import sys
 import pyperclip
 import requests
 
-youtubeurl_line_token = 'dw8xZ8HE5RK9PqG7g7X1ClBhKELzb0lyFirvM5syijw'
-volume_str = 80
+line_token = 'WWjCPbFk5lRPjuq3LsHh2ZjOQidARUgqw8LszvNX8DH'
+volume_num = 80
+volume_str = str(volume_num)+'%'
 os.system("sudo amixer -M set PCM %s > /dev/null &" % volume_str) #預設音量為80%
 
-def lineNotifyMessage(line_token, msg):
+def lineNotifyMessage(token, msg):
       headers = {
-          "Authorization": "Bearer " + line_token, 
+          "Authorization": "Bearer " + token, 
           "Content-Type" : "application/x-www-form-urlencoded"
       }
       payload = {'message': msg}
@@ -27,9 +28,9 @@ def on_connect(client, userdata, flags, rc):
       if flags["session present"] == 0:
         print("subscribing", 0) 
         client.subscribe("playsong", 0)  
-        client.subscribe("volume", 0)
+        client.subscribe("volume", 1)
         client.subscribe("pause_play",0)
-        #client.subscribe("shutdown", 0)        
+        client.subscribe("youtube_url", 0)        
                                  
     else:
         print("connection failed ", rc)    
@@ -47,7 +48,12 @@ def on_message(client, userdata, msg):
       print("songkind...", songkind)
       print("songnum....", songnum)           
       playmusic(songkind, songnum)
-      genurl(songkind, songnum)   
+      genurl(songkind, songnum)
+      
+    elif msg.topic == 'youtube_url':
+      os.system("ps aux | grep mpsyt | awk '{print $2}' | xargs kill -9") 
+      song_url = msg.payload.decode("utf-8")
+      os.system("mpsyt 'playurl %s' > /dev/null&" % song_url)    
         
     elif msg.topic == 'volume':
       volume_str = msg.payload.decode("utf-8")
@@ -65,14 +71,14 @@ def playmusic(songkind, songnum):
 def genurl(songkind, songnum):
     print("generate url running ....")
     time.sleep(3)
-    os.system("mpsyt '/%s, x %d, q' > /dev/null"  % (songkind, songnum))     
-    video_url = pyperclip.paste()                                                  
-    print("youtube URL..", video_url)    
-    time.sleep(1)
-    lineNotifyMessage(youtubeurl_line_token, video_url)         
+    os.system("mpsyt '/%s, x %d, q' > /dev/null "  % (songkind, songnum))     
+    video_url = pyperclip.paste()                                        
+    print("youtube URL..", video_url)
+    mqttmsg = video_url
+    client.publish("genurl", mqttmsg, 0, True) #發佈訊息     
       
 os.system("ps aux | grep mpsyt | awk '{print $2}' | xargs kill -9") 
-lineNotifyMessage(youtubeurl_line_token, "youtube播放器已啟動")
+lineNotifyMessage(line_token, "youtube播放器已啟動")
 client = mqtt.Client()  
 client.on_connect = on_connect  
 client.on_message = on_message 

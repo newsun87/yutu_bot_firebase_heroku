@@ -1,16 +1,16 @@
 
 ---------- Test NLU API, api=seg ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1580832321898&sign=468ea0c6f572a9a9ae58c205d92c0597&rq=音量最小聲'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1581823504054&sign=da430ce26d97eb94d66232cb61e63158&rq=播放南方二重唱'
 
 Here is the result:
 
-{"data":{"seg":"音量 最 小 聲 "},"status":"ok"}
+{"data":{"seg":"播放 南方 二重唱 "},"status":"ok"}
 
 ---------- Test NLU API, api=nli ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1580832322540&sign=d5e29ec14ac2768ac3059870fb073787&rq={"data_type":"stt","data":{"input_type":"1","text":"音量最小聲"}}'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1581823504413&sign=95d120355eca8455900732c668028418&rq={"data_type":"stt","data":{"input_type":"1","text":"播放南方二重唱"}}'
 
 Here is the result:
 
-{"data":{"nli":[{"desc_obj":{"result":"音量已調最小聲","status":0},"semantic":[{"app":"smarthome","input":"音量最小聲","slots":[{"name":"音量","value":"最小聲"}],"modifier":["adjust"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
+{"data":{"nli":[{"desc_obj":{"result":"我也喜歡南方二重唱這一首歌，請好好聆聽","status":0},"semantic":[{"app":"smarthome","input":"播放南方二重唱","slots":[{"name":"歌名","value":"南方二重唱"}],"modifier":["playsong"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
