@@ -69,7 +69,12 @@ def handle_message(event):
       line_bot_api.reply_message(
       event.reply_token,
       TextSendMessage(text="馬上播放 " + event.message.text))      
-      client.publish("youtube_url", event.message.text, 0, True) #發佈訊息      
+      client.publish("youtube_url", event.message.text, 0, True) #發佈訊息
+    elif event.message.text.startswith('https://www.youtube.com/watch?'):      
+      line_bot_api.reply_message(
+      event.reply_token,
+      TextSendMessage(text="馬上播放 " + event.message.text))      
+      client.publish("youtube_url", event.message.text, 0, True) #發佈訊息         
     elif event.message.text == 'help':
       with open('help.txt', mode='r', encoding = "utf-8") as f:
         content = f.read()
