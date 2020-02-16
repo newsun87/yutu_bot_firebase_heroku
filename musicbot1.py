@@ -1,14 +1,15 @@
-# -*- coding: UTF-8 -*-
-
 from flask import Flask, request, abort
 
 from linebot import (
     LineBotApi, WebhookHandler
 )
-from linebot.exceptions import (InvalidSignatureError)
-from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
+from linebot.exceptions import (
+    InvalidSignatureError
+)
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage,
+)
 
-from flask import render_template
 import paho.mqtt.client as mqtt
 
 import os
@@ -18,6 +19,7 @@ import time
 
 access_token = "x5LS9O8T8tfm7A2lSeiEpLx6j2u9ZUj5z6mhg1l/gO6pC2BLIJh5NCf2/mwmj88iIiS7hrn8mNAsgPU9tFCDIB3jtOCqHirPrfcjBiftdZZ2C7eQ93iPCfDwY5tAE1Qq7CSUZsDMMBgutdADEiBnGQdB04t89/1O/w1cDnyilFU="
 channel_secret = "f19d907284bd9d7332e034c3adf60b3c"
+user_id = "Ubf2b9f4188d45848fb4697d41c962591"
 volume_num = 80
 mqttmsg = str(volume_num )+'%'
 
@@ -26,16 +28,9 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(access_token)
 handler = WebhookHandler(channel_secret)
 
-@app.route('/')
-def showPage():
- return render_template('index.html')
-
-@app.route('/getdata', methods=['GET', 'POST']) 
-def getData():
-  with open('record.txt','r', encoding = "utf-8") as fileobj:
-    word = fileobj.read().strip('\n')
-    print(word)  
-  return word
+@app.route("/")
+def home():
+    return 'home OK'
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -53,6 +48,7 @@ def callback():
     except InvalidSignatureError:
         print("Invalid signature. Please check your channel access token/channel secret.")
         abort(400)
+
     return 'OK'
 
 # 處理訊息
@@ -65,18 +61,11 @@ def handle_message(event):
       event.reply_token,
       TextSendMessage(text="馬上播放 " + new_message))      
       client.publish("youtube_url", new_message, 0, True) #發佈訊息  
-    elif event.message.text == 'help':
-      with open('help.txt', mode='r', encoding = "utf-8") as f:
-        content = f.read()
-        print(content)      
-        line_bot_api.reply_message(
-         event.reply_token,
-         TextSendMessage(text=content))     
-    else:             
-      musicplay(event.message.text)
-      line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=nlu_text))
+    else:
+       musicplay(event.message.text)
+       line_bot_api.reply_message(
+          event.reply_token,
+          TextSendMessage(text=nlu_text))
 
 def random_int_list(num):
   list = range(1, num)
@@ -111,10 +100,8 @@ def musicplay(text):
        mqttmsg = songname + '~' + str(randomList[0])           
        print('songname ', songname)       
        songnum = randomList[0]
-       songkind = songname
-       with open('record.txt','w', encoding = "utf-8") as fileobj:
-         word = fileobj.write(songname)                    
-       client.publish("playsong", mqttmsg, 0, retain=False) #發佈訊息
+       songkind = songname                    
+       client.publish("playsong", mqttmsg, 0, True) #發佈訊息
        print("message published")                                
                
     if action == 'playsinger': #播放指定歌手
@@ -125,17 +112,15 @@ def musicplay(text):
         mqttmsg = singername + '~' + str(randomList[0])                                
         print('singername ', singername)                  
         songnum = randomList[0]
-        songkind = singername
-        with open('record.txt','w', encoding = "utf-8") as fileobj:
-         word = fileobj.write(singername)                                 
-        client.publish("playsong", mqttmsg, 0, retain=False) #發佈訊息
+        songkind = singername                                
+        client.publish("playsong", mqttmsg, 0, True) #發佈訊息
         print("message published")                     
 
     if action == 'playpause': #播放暫停/繼續
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text)
         mqttmsg ='playpause'
-        client.publish("pause_play", mqttmsg, 0, retain=False) #發佈訊息
+        client.publish("pause_play", mqttmsg, 0, True) #發佈訊息
         print("message published")      
 
     if action == 'adjust': #調整音量
@@ -147,32 +132,32 @@ def musicplay(text):
              print("volume_num ", volume_num )
              volume_str = str(volume_num )+'%'
              mqttmsg = volume_str            
-             client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息                             
+             client.publish("volume", mqttmsg, 0, True) #發佈訊息                             
          elif volume == '小聲':
               volume_num = volume_num - 10
               volume_str = str(volume_num)+'%'
               mqttmsg = volume_str             
-              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息              
+              client.publish("volume", mqttmsg, 0, True) #發佈訊息              
          elif volume == '最小聲':
               volume_num = 50
               volume_str = str(volume_num)+'%'             
               mqttmsg = volume_str             
-              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息   
+              client.publish("volume", mqttmsg, 0, True) #發佈訊息   
          elif volume == '最大聲':
               volume_num = 100
               volume_str = str(volume_num)+'%'
               mqttmsg = volume_str               
-              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息           
+              client.publish("volume", mqttmsg, 0, True) #發佈訊息           
          elif volume == '適中' or volume == '剛好':
               volume_num = 70
               volume_str = str(volume_num)+'%'
               mqttmsg = volume_str               
-              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息
+              client.publish("volume", mqttmsg, 0, True) #發佈訊息
            
     if action == 'shutdown':            
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']      
       mqttmsg = "shutdown"               
-      client.publish("shutdown", mqttmsg, 0, retain=False) #發佈訊息                
+      client.publish("shutdown", mqttmsg, 0, True) #發佈訊息                
       
   else:
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -182,18 +167,22 @@ def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe("genurl", 0)    
   
-def on_message(client, userdata, msg):      
-    print(msg.topic + " " + str(msg.payload))         
+def on_message(client, userdata, msg):
+    global user_id  
+    print(msg.topic + " " + str(msg.payload))    
+    if msg.topic == 'genurl':       
+       text_message = TextSendMessage(text=str(msg.payload))     
+       line_bot_api.push_message(user_id, text_message)
 
 client = mqtt.Client()  
 client.on_connect = on_connect  
 client.on_message = on_message  
 client.connect("broker.mqttdashboard.com", 1883) 
-client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息 
+client.publish("volume", mqttmsg, 0, True) #發佈訊息 
 client.loop_start()
 
 if __name__ == "__main__":           
-    app.run(debug=True, host='0.0.0.0', port=5000)    
+    app.run(debug=True, host='127.0.0.1', port=5000)    
 
     
     
