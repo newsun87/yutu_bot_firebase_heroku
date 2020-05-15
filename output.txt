@@ -1,16 +1,16 @@
 
 ---------- Test NLU API, api=seg ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1581823504054&sign=da430ce26d97eb94d66232cb61e63158&rq=播放南方二重唱'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=seg&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1589512633023&sign=287edb2442211db8f4e83e86c4cd5a8e&rq=播放歌手盧廣仲的歌'
 
 Here is the result:
 
-{"data":{"seg":"播放 南方 二重唱 "},"status":"ok"}
+{"data":{"seg":"播放 歌手 盧 廣 仲 的 歌 "},"status":"ok"}
 
 ---------- Test NLU API, api=nli ----------
 
-curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1581823504413&sign=95d120355eca8455900732c668028418&rq={"data_type":"stt","data":{"input_type":"1","text":"播放南方二重唱"}}'
+curl -X POST https://tw.olami.ai/cloudservice/api -d 'api=nli&appkey=8bd057135ec8432bb7bd2b2caa510aca&timestamp=1589512634891&sign=1f2a7dd83cb1ade0ff630279438c1b1a&rq={"data_type":"stt","data":{"input_type":"1","text":"播放歌手盧廣仲的歌"}}'
 
 Here is the result:
 
-{"data":{"nli":[{"desc_obj":{"result":"我也喜歡南方二重唱這一首歌，請好好聆聽","status":0},"semantic":[{"app":"smarthome","input":"播放南方二重唱","slots":[{"name":"歌名","value":"南方二重唱"}],"modifier":["playsong"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
+{"data":{"nli":[{"desc_obj":{"result":"馬上為你播放盧廣仲的歌","status":0},"semantic":[{"app":"smarthome","input":"播放歌手盧廣仲的歌","slots":[{"name":"歌手名","value":"盧廣仲"}],"modifier":["playsinger"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}

@@ -6,7 +6,7 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 from linebot.exceptions import (InvalidSignatureError)
-from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
+from linebot.models import *
 
 from flask import render_template
 import paho.mqtt.client as mqtt
@@ -15,6 +15,15 @@ import os
 import json
 import random
 import time
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+
+#取得通行憑證
+cred = credentials.Certificate("serviceAccount.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL' : 'https://line-bot-test-77a80.firebaseio.com/'
+})
 
 access_token = "x5LS9O8T8tfm7A2lSeiEpLx6j2u9ZUj5z6mhg1l/gO6pC2BLIJh5NCf2/mwmj88iIiS7hrn8mNAsgPU9tFCDIB3jtOCqHirPrfcjBiftdZZ2C7eQ93iPCfDwY5tAE1Qq7CSUZsDMMBgutdADEiBnGQdB04t89/1O/w1cDnyilFU="
 channel_secret = "f19d907284bd9d7332e034c3adf60b3c"
@@ -58,36 +67,81 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    global nlu_text
-    if event.message.text.startswith('【youtube url】'):
+  ref = db.reference('/') # 參考路徑 	
+  userId = 'ypl'
+  users_userId_ref = ref.child('youtube_music/'+ userId)
+  
+  global nlu_text
+  if event.message.text.startswith('【youtube url】'):
       new_message = event.message.text.lstrip('【youtube url】')
       line_bot_api.reply_message(
-      event.reply_token,
-      TextSendMessage(text="馬上播放 " + new_message))      
+        event.reply_token, TextSendMessage(text="馬上播放 " + new_message))
       client.publish("youtube_url", new_message, 0, True) #發佈訊息
-    elif event.message.text.startswith('https://youtube.com/watch?'):      
+  elif event.message.text.startswith('https://youtube.com/watch?'):      
       line_bot_api.reply_message(
       event.reply_token,
       TextSendMessage(text="馬上播放 " + event.message.text))      
       client.publish("youtube_url", event.message.text, 0, True) #發佈訊息
-    elif event.message.text.startswith('https://www.youtube.com/watch?'):      
+  elif event.message.text == 'music_play':
+      ref = db.reference('/') # 參考路徑      
+      videourl = users_userId_ref.get()['videourl'] 
+      line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text="馬上播放 " + videourl))
+      client.publish("youtube_url", videourl, 0, True)
+  elif event.message.text == '歌曲資訊':      
+      users_userId_ref = ref.child('youtube_music/'+ userId)
+      videourl = users_userId_ref.get()['videourl']   	        
       line_bot_api.reply_message(
       event.reply_token,
-      TextSendMessage(text="馬上播放 " + event.message.text))      
-      client.publish("youtube_url", event.message.text, 0, True) #發佈訊息         
-    elif event.message.text == 'help':
+      TextSendMessage(text="歌曲資訊 " + videourl)) 
+  elif event.message.text == 'menu':
+      QuickReply_text_message = TextSendMessage(
+       text="點選你想要的功能",
+       quick_reply = QuickReply(
+        items = [
+          QuickReplyButton(
+            action = MessageAction(label = "求助", text = "help"),
+            image_url = 'https://i.imgur.com/iIZYTVw.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "停止播放", text = "停止播放"),
+            image_url = 'https://i.imgur.com/PEHPvG8.png'
+          ),
+           QuickReplyButton(
+            action = MessageAction(label = "音樂播放", text = "music_play"),
+            image_url = 'https://i.imgur.com/W1jVNlS.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "音量大聲", text = "音量大聲一點"),
+            image_url = 'https://i.imgur.com/jPHUkGZ.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "音量小聲", text = "音量小聲一點"),
+            image_url = 'https://i.imgur.com/fmArX5z.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "音量最小聲", text = "音量最小聲"),
+            image_url = 'https://i.imgur.com/sC1Xf98.png'
+          )
+          
+        ]
+       )
+      )             
+      line_bot_api.reply_message(event.reply_token, QuickReply_text_message) 
+  elif event.message.text == 'help':
       with open('help.txt', mode='r', encoding = "utf-8") as f:
         content = f.read()
         print(content)      
         line_bot_api.reply_message(
          event.reply_token,
          TextSendMessage(text=content))     
-    else:             
+  else:             
       musicplay(event.message.text)
       line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=nlu_text))
-
+        TextSendMessage(text=nlu_text))           
+            
 def random_int_list(num):
   list = range(1, num)
   random_list = [*list]
@@ -188,6 +242,7 @@ def musicplay(text):
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
 
   print("播放NLU結果的語音......"+ nlu_text)
+  
 def on_connect(client, userdata, flags, rc):  
     print("Connected with result code "+str(rc))
     client.subscribe("genurl", 0)    

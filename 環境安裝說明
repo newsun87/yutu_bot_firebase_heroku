@@ -29,7 +29,8 @@ NoDisplay=true
 Exec=/home/pi/player_start.sh
 player_start.sh內容
 #!/bin/bash
-python3 /home/pi/music_bot_heroku/youtube_player.py
+sh /home/pi/music_bot_menu_heroku/music_led.sh& #音樂播放時LED閃爍
+python3 /home/pi/music_bot_menu_heroku/youtube_player.py
 
 上傳musicbot.py至heroku
 1. 需要requirements.txt
