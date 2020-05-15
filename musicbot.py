@@ -82,6 +82,11 @@ def handle_message(event):
       event.reply_token,
       TextSendMessage(text="馬上播放 " + event.message.text))      
       client.publish("youtube_url", event.message.text, 0, True) #發佈訊息
+  elif event.message.text.startswith('https://www.youtube.com/watch?'):      
+      line_bot_api.reply_message(
+      event.reply_token,
+      TextSendMessage(text="馬上播放 " + event.message.text))      
+      client.publish("youtube_url", event.message.text, 0, True) #發佈訊息    
   elif event.message.text == 'music_play':
       ref = db.reference('/') # 參考路徑      
       videourl = users_userId_ref.get()['videourl'] 
@@ -127,8 +132,57 @@ def handle_message(event):
           
         ]
        )
-      )             
+      )
       line_bot_api.reply_message(event.reply_token, QuickReply_text_message) 
+  elif event.message.text == 'favor':
+      QuickReply_text_message = TextSendMessage(
+       text="點選你喜歡的歌手",
+       quick_reply = QuickReply(
+        items = [
+          QuickReplyButton(
+            action = MessageAction(label = "張惠妹", text = "我要聽歌手張惠妹的歌"),
+            image_url = 'https://i.imgur.com/0yjTHss.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "張信哲", text = "我要聽歌手張信哲的歌"),
+            image_url = 'https://i.imgur.com/Q3lUQJa.png'
+          ),
+           QuickReplyButton(
+            action = MessageAction(label = "田馥甄", text = "我要聽歌手田馥甄的歌"),
+            image_url = 'https://i.imgur.com/0yjTHss.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "鄧紫棋", text = "我要聽歌手鄧紫棋的歌"),
+            image_url = 'https://i.imgur.com/0yjTHss.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "藍又時", text = "我要聽歌手藍又時的歌"),
+            image_url = 'https://i.imgur.com/0yjTHss.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "李玖哲", text = "我要聽歌手李玖哲的歌"),
+            image_url = 'https://i.imgur.com/Q3lUQJa.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "李玖哲", text = "我要聽歌手李玖哲的歌"),
+            image_url = 'https://i.imgur.com/sC1Xf98.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "伍佰", text = "我要聽歌手伍佰的歌"),
+            image_url = 'https://i.imgur.com/sC1Xf98.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "陳奕迅", text = "我要聽歌手陳奕迅的歌"),
+            image_url = 'https://i.imgur.com/sC1Xf98.png'
+          ),
+          QuickReplyButton(
+            action = MessageAction(label = "郁可唯", text = "我要聽歌手郁可唯的歌"),
+            image_url = 'https://i.imgur.com/0yjTHss.png'
+          )          
+        ]
+       )
+      )
+      line_bot_api.reply_message(event.reply_token, QuickReply_text_message)     
   elif event.message.text == 'help':
       with open('help.txt', mode='r', encoding = "utf-8") as f:
         content = f.read()

@@ -1,1 +1,1 @@
-{"data":{"nli":[{"desc_obj":{"result":"馬上為你播放盧廣仲的歌","status":0},"semantic":[{"app":"smarthome","input":"播放歌手盧廣仲的歌","slots":[{"name":"歌手名","value":"盧廣仲"}],"modifier":["playsinger"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
+{"data":{"nli":[{"desc_obj":{"result":"馬上為你播放田馥甄的歌","status":0},"semantic":[{"app":"smarthome","input":"我要聽歌手田馥甄的歌","slots":[{"name":"歌手名","value":"田馥甄"}],"modifier":["playsinger"],"customer":"5d70a57e24ac69af75c825b5"}],"type":"smarthome"}]},"status":"ok"}
