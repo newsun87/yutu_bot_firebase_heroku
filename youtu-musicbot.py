@@ -204,10 +204,10 @@ def handle_message(event):
          event.reply_token,
          TextSendMessage(text=content))     
   else:             
-      musicplay(event.message.text)
+      send_message = musicplay(event.message.text)
       line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=nlu_text))           
+        TextSendMessage(text=send_message)           
             
 def random_int_list(num):
   list = range(1, num)
@@ -265,7 +265,7 @@ def musicplay(text):
         time.sleep(1)
         client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息         
         #message = TextSendMessage(text = nlu_text + '\n' + video_url)  
-        message = TextSendMessage(text = video_url)       
+        message = nlu_text + '\n' + video_url       
         return message                             
 
     if action == 'playpause': #播放暫停/繼續
@@ -307,9 +307,6 @@ def musicplay(text):
               mqttmsg = str(volume_num)               
               client.publish("music/volume", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息
          print('volume....', volume_num)      
-         #ref.child(base_users_userId + userId + '/youtube_music').update({
-         #      'volume':volume_num}                
-         #)         
          message = TextSendMessage(text = nlu_text)
          return message                 
            
