@@ -236,23 +236,18 @@ def musicplay(text):
   if status == 0 and type == 'smarthome':     
     action = temp['data']['nli'][0] ['semantic'][0]['modifier'][0]
     if action == 'playsong': #播放指定歌曲
-       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
-       print('nlu', nlu_text) 
-       songname = temp['data']['nli'][0] ['semantic'][0]['slots'][0]['value'] 
-       randomList = random_int_list(15)[0:1]       
-       mqttmsg = songname + '~' + str(randomList[0])           
-       print('songname ', songname)       
-       songnum = randomList[0]
-       songkind = songname
-       with open('record.txt','w', encoding = "utf-8") as fileobj:
-         word = fileobj.write(songname)                    
-       client.publish("music/playsong", userId+'~'+ mqttmsg, 2, retain=True) #發佈訊息
-       time.sleep(1)
-       client.publish("music/playsong", ' ', 2, retain=True) #發佈訊息 
-       #playsong      
-       print("message published")
-       message = TextSendMessage(text = nlu_text)       
-       return message                                                  
+        nlu_text = temp['data']['nli'][0]['desc_obj']['result']
+        print('nlu', nlu_text) 
+        songname = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
+        video_url = yt_search(songname)        
+        ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
+        print("歌曲 {videourl} 更新成功...".format(videourl=video_url))      
+        client.publish("music/youtubeurl", userId +'~'+ video_url, 2, retain=True) #發佈訊息 
+        print("message published")
+        time.sleep(1)
+        client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息          
+        message = nlu_text + '\n' + video_url       
+        return message                                                                   
                
     if action == 'playsinger': #播放指定歌手
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -265,7 +260,6 @@ def musicplay(text):
         print("message published")
         time.sleep(1)
         client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息         
-        #message = TextSendMessage(text = nlu_text + '\n' + video_url)  
         message = nlu_text + '\n' + video_url       
         return message                             
 
