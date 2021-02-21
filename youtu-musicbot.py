@@ -18,6 +18,10 @@ import time
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+import configparser
+
+config = configparser.ConfigParser()
+config.read('youtu_music.conf')
 
 #取得通行憑證
 cred = credentials.Certificate("serviceAccount.json")
@@ -25,10 +29,11 @@ firebase_admin.initialize_app(cred, {
     'databaseURL' : 'https://line-bot-test-77a80.firebaseio.com/'
 })
 
-access_token = "x5LS9O8T8tfm7A2lSeiEpLx6j2u9ZUj5z6mhg1l/gO6pC2BLIJh5NCf2/mwmj88iIiS7hrn8mNAsgPU9tFCDIB3jtOCqHirPrfcjBiftdZZ2C7eQ93iPCfDwY5tAE1Qq7CSUZsDMMBgutdADEiBnGQdB04t89/1O/w1cDnyilFU="
-channel_secret = "f19d907284bd9d7332e034c3adf60b3c"
-volume_num = 80
-mqttmsg = str(volume_num )+'%'
+#取得 linebot 通行憑證
+access_token = config.get('linebot', 'access_token')
+channel_secret = config.get('linebot', 'channel_secret')
+volume = config.get('setup', 'volume')
+mqttmsg = volume_num +'%'
 
 app = Flask(__name__)
 
