@@ -257,16 +257,14 @@ def musicplay(text):
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text) 
         singername = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
-        video_url = yt_search(singername)
-        print(video_url)
-        #TextSendMessage(text="馬上播放 " + search_result)
+        video_url = yt_search(singername)        
         ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
         print("歌曲 {videourl} 更新成功...".format(videourl=video_url))      
         client.publish("music/youtubeurl", userId +'~'+ video_url, 2, retain=True) #發佈訊息 
         print("message published")
         time.sleep(1)
         client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息         
-        message = TextSendMessage(text = nlu_text)        
+        message = TextSendMessage(text = nlu_text + '\n' + video_url)        
         return message                             
 
     if action == 'playpause': #播放暫停/繼續
@@ -328,12 +326,12 @@ def musicplay(text):
 KEY = 'AIzaSyCXdlB7xy9F2YJn7sYsNkmA4dE3PvbHVhw'
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'  
-def yt_search(singername):
+def yt_search(video_keywords):
     youtube = build('youtube', 'v3', developerKey=KEY)
 
     # Get YouTube API results
     search_response = youtube.search().list(
-        q=singername, # 查詢文字
+        q=video_keywords, # 查詢文字
         type='video',
         part='id,snippet', # 把需要的資訊列出來
         maxResults=10 # 預設為五筆資料，可以設定1~50
