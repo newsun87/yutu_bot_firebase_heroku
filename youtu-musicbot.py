@@ -19,6 +19,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 import configparser
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
 config = configparser.ConfigParser()
 config.read('youtu_music.conf')
@@ -242,60 +244,77 @@ def musicplay(text):
        songkind = songname
        with open('record.txt','w', encoding = "utf-8") as fileobj:
          word = fileobj.write(songname)                    
-       client.publish("playsong", mqttmsg, 0, retain=False) #發佈訊息
-       print("message published")                                
+       client.publish("music/playsong", userId+'~'+ mqttmsg, 2, retain=True) #發佈訊息
+       time.sleep(1)
+       client.publish("music/playsong", ' ', 2, retain=True) #發佈訊息 
+       #playsong      
+       print("message published")
+       message = TextSendMessage(text = nlu_text)       
+       return message                                                  
                
     if action == 'playsinger': #播放指定歌手
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text) 
         singername = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
-        randomList = random_int_list(15)[0:1]
-        mqttmsg = singername + '~' + str(randomList[0])                                
+        search_result = yt_search(singername)
+        print(search_result['results'])
+        #mqttmsg = singername + '~' + str(randomList[0])                                
         print('singername ', singername)                  
-        songnum = randomList[0]
-        songkind = singername
+        #songnum = randomList[0]
+        #songkind = singername
         with open('record.txt','w', encoding = "utf-8") as fileobj:
          word = fileobj.write(singername)                                 
-        client.publish("playsong", mqttmsg, 0, retain=False) #發佈訊息
-        print("message published")                     
+        client.publish("music/playsong", userId+'~'+ mqttmsg, 2, retain=False) #發佈訊息
+        time.sleep(1)
+        #client.publish("music/playsong", ' ', 2, retain=True) #發佈訊息         
+        print("message published")
+        message = TextSendMessage(text = nlu_text)        
+        return message                             
 
-    if action == 'playpause': #播放暫停/繼續
+     if action == 'playpause': #播放暫停/繼續
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text)
         mqttmsg ='playpause'
-        client.publish("pause_play", mqttmsg, 0, retain=False) #發佈訊息
-        print("message published")      
+        client.publish("music/pause_play", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息              
+        print("message published")
+        message = TextSendMessage(text = nlu_text)
+        return message         
 
     if action == 'adjust': #調整音量
-         volume = temp['data']['nli'][0] ['semantic'][0]['slots'][0]['value']
+         #userId = 'Ubf2b9f4188d45848fb4697d41c962591'
+         users_userId_ref = ref.child(base_users_userId + userId + '/youtube_music/volume')
+         volume_str = users_userId_ref.get()         
+         volume = temp['data']['nli'][0] ['semantic'][0]['slots'][0]['value']         
          nlu_text = temp['data']['nli'][0]['desc_obj']['result']
          print('nlu', nlu_text)
          if volume == '大聲':
-             volume_num = volume_num + 10            
-             print("volume_num ", volume_num )
-             volume_str = str(volume_num )+'%'
-             mqttmsg = volume_str            
-             client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息                             
+             print("volume....",volume_str)
+             volume_num = int(volume_str) + 10            
+             print("volume_num ", volume_num )             
+             mqttmsg = str(volume_num )           
+             client.publish("music/volume", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息                             
          elif volume == '小聲':
-              volume_num = volume_num - 10
-              volume_str = str(volume_num)+'%'
-              mqttmsg = volume_str             
-              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息              
+              volume_num = int(volume_str) - 10             
+              mqttmsg = str(volume_num )           
+              client.publish("music/volume", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息              
          elif volume == '最小聲':
-              volume_num = 50
-              volume_str = str(volume_num)+'%'             
-              mqttmsg = volume_str             
-              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息   
+              volume_num = 50                          
+              mqttmsg = str(volume_num )           
+              client.publish("music/volume", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息   
          elif volume == '最大聲':
               volume_num = 100
-              volume_str = str(volume_num)+'%'
-              mqttmsg = volume_str               
-              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息           
+              mqttmsg = str(volume_num )               
+              client.publish("music/volume", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息           
          elif volume == '適中' or volume == '剛好':
-              volume_num = 70
-              volume_str = str(volume_num)+'%'
-              mqttmsg = volume_str               
-              client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息
+              volume_num = 70              
+              mqttmsg = str(volume_num)               
+              client.publish("music/volume", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息
+         print('volume....', volume_num)      
+         #ref.child(base_users_userId + userId + '/youtube_music').update({
+         #      'volume':volume_num}                
+         #)         
+         message = TextSendMessage(text = nlu_text)
+         return message                 
            
     if action == 'shutdown':            
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']      
@@ -306,7 +325,46 @@ def musicplay(text):
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
 
   print("播放NLU結果的語音......"+ nlu_text)
+
+# Setup YouTube API
+KEY = 'AIzaSyCXdlB7xy9F2YJn7sYsNkmA4dE3PvbHVhw'
+YOUTUBE_API_SERVICE_NAME = 'youtube'
+YOUTUBE_API_VERSION = 'v3'  
+def yt_search(singername):
+    youtube = build('youtube', 'v3', developerKey=KEY)
+
+    # Get YouTube API results
+    search_response = youtube.search().list(
+        q=singername, # 查詢文字
+        type='video',
+        part='id,snippet', # 把需要的資訊列出來
+        maxResults=10 # 預設為五筆資料，可以設定1~50
+    ).execute()
+    items = search_response['items']
+    #print(items)
+    if not items:
+      return 'Error: No YouTube results'
+    else:
+      videos = list(map(video_filter, items))    
+      return {
+       'results': videos
+    }
+
+# Sent an HTML page with the top ten videos
+def video_filter(api_video):
+  title = api_video['snippet']['title']         
+  kind = api_video['id']['kind']
+  videoid = api_video['id']['videoId']
+  url = f'https://youtu.be/{videoid}'
+  thumbnails = api_video['snippet']['thumbnails']['medium']['url']
+  return {
+            '影片名稱': title,
+            '影片種類': kind,
+            '影片網址': url,
+            '封面照片':thumbnails
+  }
   
+
 def on_connect(client, userdata, flags, rc):  
     print("Connected with result code "+str(rc))
     client.subscribe("genurl", 0)    
