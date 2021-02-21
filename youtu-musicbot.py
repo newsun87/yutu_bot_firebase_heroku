@@ -257,7 +257,7 @@ def musicplay(text):
         print('nlu', nlu_text) 
         singername = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
         search_result = yt_search(singername)
-        print(search_result['results'])
+        print(search_result)
         #mqttmsg = singername + '~' + str(randomList[0])                                
         print('singername ', singername)                  
         #songnum = randomList[0]
