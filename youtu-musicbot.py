@@ -271,7 +271,7 @@ def musicplay(text):
         message = TextSendMessage(text = nlu_text)        
         return message                             
 
-     if action == 'playpause': #播放暫停/繼續
+    if action == 'playpause': #播放暫停/繼續
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text)
         mqttmsg ='playpause'
