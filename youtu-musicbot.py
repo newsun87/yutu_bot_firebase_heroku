@@ -207,7 +207,8 @@ def handle_message(event):
       send_message = musicplay(event.message.text)
       line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=send_message)           
+        TextSendMessage(text=send_message)
+      )           
             
 def random_int_list(num):
   list = range(1, num)
