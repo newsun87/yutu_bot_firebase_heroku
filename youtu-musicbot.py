@@ -33,7 +33,7 @@ firebase_admin.initialize_app(cred, {
 access_token = config.get('linebot', 'access_token')
 channel_secret = config.get('linebot', 'channel_secret')
 volume = config.get('setup', 'volume')
-mqttmsg = volume_num +'%'
+mqttmsg = volume +'%'
 
 app = Flask(__name__)
 
