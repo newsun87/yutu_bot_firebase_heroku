@@ -35,6 +35,9 @@ channel_secret = config.get('linebot', 'channel_secret')
 volume = config.get('setup', 'volume')
 mqttmsg = volume +'%'
 
+base_users_userId  = 'smarthome-bot/'
+ref = db.reference('/') # 參考路徑 
+
 app = Flask(__name__)
 
 line_bot_api = LineBotApi(access_token)
@@ -72,39 +75,41 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-  ref = db.reference('/') # 參考路徑 	
-  userId = 'ypl'
-  users_userId_ref = ref.child('youtube_music/'+ userId)
-  
-  global nlu_text
+  global userId, nlu_text 
+  ref = db.reference('/') # 參考路徑 
+  userId = event.source.user_id   
+  users_userId_ref = ref.child('youtube_music/'+ userId)  
+  # -----雲端音樂 quickreply 的指令操作-------------- 
   if event.message.text.startswith('【youtube url】'):
       new_message = event.message.text.lstrip('【youtube url】')
+      ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":videourl})
+      print("歌曲 {videourl} 更新成功...".format(videourl=new_message))
       line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text="馬上播放 " + new_message))
-      client.publish("youtube_url", new_message, 0, True) #發佈訊息
+      client.publish("music/youtubeurl", userId+'~'+ new_message, 2, retain=True) #發佈訊息
+      time.sleep(1)
+      client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息           
+      
   elif event.message.text.startswith('https://youtube.com/watch?'):      
       line_bot_api.reply_message(
       event.reply_token,
-      TextSendMessage(text="馬上播放 " + event.message.text))      
-      client.publish("youtube_url", event.message.text, 0, True) #發佈訊息
+      TextSendMessage(text="馬上播放 " + event.message.text))
+      ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":event.message.text})
+      print("歌曲 {videourl} 更新成功...".format(videourl=event.message.text))      
+      client.publish("music/youtubeurl", userId +'~'+ event.message.text, 2, retain=True) #發佈訊息 
+      time.sleep(1)
+      client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息     
+      
   elif event.message.text.startswith('https://www.youtube.com/watch?'):      
       line_bot_api.reply_message(
       event.reply_token,
-      TextSendMessage(text="馬上播放 " + event.message.text))      
-      client.publish("youtube_url", event.message.text, 0, True) #發佈訊息    
-  elif event.message.text == 'music_play':
-      ref = db.reference('/') # 參考路徑      
-      videourl = users_userId_ref.get()['videourl'] 
-      line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text="馬上播放 " + videourl))
-      client.publish("youtube_url", videourl, 0, True)
-  elif event.message.text == '歌曲資訊':      
-      users_userId_ref = ref.child('youtube_music/'+ userId)
-      videourl = users_userId_ref.get()['videourl']   	        
-      line_bot_api.reply_message(
-      event.reply_token,
-      TextSendMessage(text="歌曲資訊 " + videourl)) 
+      TextSendMessage(text="馬上播放 " + event.message.text))
+      ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":event.message.text})
+      print("歌曲 {videourl} 更新成功...".format(videourl=event.message.text))          
+      client.publish("music/youtubeurl", userId +'~'+ event.message.text, 2, retain=True) #發佈訊息
+      time.sleep(1)
+      client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息       
+# -----------------------------------------------------------------------
   elif event.message.text == 'menu':
       QuickReply_text_message = TextSendMessage(
        text="點選你想要的功能",
