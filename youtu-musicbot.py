@@ -21,6 +21,7 @@ from firebase_admin import db
 import configparser
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+import random
 
 config = configparser.ConfigParser()
 config.read('youtu_music.conf')
@@ -256,18 +257,15 @@ def musicplay(text):
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text) 
         singername = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
-        search_result = yt_search(singername)
-        print(search_result)
-        #mqttmsg = singername + '~' + str(randomList[0])                                
-        print('singername ', singername)                  
-        #songnum = randomList[0]
-        #songkind = singername
-        with open('record.txt','w', encoding = "utf-8") as fileobj:
-         word = fileobj.write(singername)                                 
-        client.publish("music/playsong", userId+'~'+ mqttmsg, 2, retain=False) #發佈訊息
-        time.sleep(1)
-        #client.publish("music/playsong", ' ', 2, retain=True) #發佈訊息         
+        video_url = yt_search(singername)
+        print(video_url)
+        #TextSendMessage(text="馬上播放 " + search_result)
+        ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
+        print("歌曲 {videourl} 更新成功...".format(videourl=video_url))      
+        client.publish("music/youtubeurl", userId +'~'+ video_url, 2, retain=True) #發佈訊息 
         print("message published")
+        time.sleep(1)
+        client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息         
         message = TextSendMessage(text = nlu_text)        
         return message                             
 
@@ -345,10 +343,13 @@ def yt_search(singername):
     if not items:
       return 'Error: No YouTube results'
     else:
-      videos = list(map(video_filter, items))    
-      return {
-       'results': videos
-    }
+      videos = list(map(video_filter, items))     
+      num = random.randint(0,len(videos))
+      print(num)
+      videoid = videos[num]['影片網址']
+      youtube_url = f'{videoid}'
+      print(youtube_url)    
+      return youtube_url
 
 # Sent an HTML page with the top ten videos
 def video_filter(api_video):
