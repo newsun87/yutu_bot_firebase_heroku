@@ -90,7 +90,7 @@ def handle_message(event):
       time.sleep(1)
       client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息           
       
-  elif event.message.text.startswith('https://youtube.com/watch?'):      
+  elif event.message.text.startswith('https://youtube.com/watch?') or event.message.text.startswith('https://youtu.be/'):      
       line_bot_api.reply_message(
       event.reply_token,
       TextSendMessage(text="馬上播放 " + event.message.text))
