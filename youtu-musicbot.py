@@ -264,7 +264,8 @@ def musicplay(text):
         print("message published")
         time.sleep(1)
         client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息         
-        message = TextSendMessage(text = nlu_text + '\n' + video_url)        
+        #message = TextSendMessage(text = nlu_text + '\n' + video_url)  
+        message = TextSendMessage(text = video_url)       
         return message                             
 
     if action == 'playpause': #播放暫停/繼續
