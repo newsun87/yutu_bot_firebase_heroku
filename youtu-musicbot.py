@@ -261,7 +261,7 @@ def musicplay(text):
               mqttmsg = str(volume_num)               
               client.publish("music/volume", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息
          print('volume....', volume_num)      
-         message = nlu_text
+         message = nlu_text + '至 ' + str(volume_num) + '%' 
          return message                 
            
     if action == 'shutdown':            
