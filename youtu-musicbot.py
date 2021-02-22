@@ -299,7 +299,8 @@ def musicplay(text):
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text) 
         songname = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
-        video_url = yt_search(songname)
+        message_list = yt_search(songname)
+        video_url = message_list[1]
         ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":songname})         
         ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
         print("歌曲 {videourl} 更新成功...".format(videourl=video_url))      
@@ -308,13 +309,14 @@ def musicplay(text):
         time.sleep(1)
         client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息          
         message = nlu_text + '\n' + video_url       
-        return TextSendMessage(text=message)                                                                  
+        return [TextSendMessage(text=message), message_list[0]]                                                                 
                
     if action == 'playsinger': #播放指定歌手
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text) 
         singername = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
-        video_url = yt_search(singername)
+        message_list = yt_search(singername)
+        video_url = message_list[1]
         ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":singername})        
         ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
         print("歌曲 {videourl} 更新成功...".format(videourl=video_url))      
@@ -323,7 +325,7 @@ def musicplay(text):
         time.sleep(1)
         client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息         
         message = nlu_text + '\n' + video_url              
-        return TextSendMessage(text=message)                              
+        return [TextSendMessage(text=message), message_list[0]]                              
 
     if action == 'playpause': #播放暫停/繼續
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -424,8 +426,12 @@ def yt_search(video_keywords):
            ]
           )
        )
+      yt_search_message = [
+        carousel_template_message, 
+        youtube_url 
+      ]
       
-      return youtube_url  
+      return carousel_template_message 
 
 # Sent an HTML page with the top ten videos
 def video_filter(api_video):
