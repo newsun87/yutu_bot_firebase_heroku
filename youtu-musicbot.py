@@ -434,7 +434,7 @@ def yt_search(video_keywords, userId):
         items.append(CarouselColumn(         
           thumbnail_image_url = video_thumbnail,  # 呈現圖片
           title = video_keywords,  # 你要顯示的標題          
-          text = '直接點選...',  # 你想問的問題或是敘述
+          text = '想聽就直接點選...',  # 你想問的問題或是敘述
           actions = [
             PostbackAction(
              label = '播放器播放',  # 顯示的文字                           
