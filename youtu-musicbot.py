@@ -158,7 +158,36 @@ def handle_message(event):
        )
       )
       line_bot_api.reply_message(event.reply_token, QuickReply_text_message) 
-     # ----------------------------------   
+     # ---------------------------------- 
+     # -------新增或刪除喜愛歌手功能-------------------------------
+  elif event.message.text.startswith('addsinger'): 
+      split_array = event.message.text.split("~")
+      singername = split_array [1]
+      print('singername..', singername)
+      favorsingerList = ref.child(base_users_userId + userId + '/youtube_music/favorsinger').get()
+      if singername not in favorsingerList: 
+        number = len(favorsingerList)
+       # print( 'number...', number) 
+        ref.child(base_users_userId + userId + '/youtube_music/favorsinger').update({number:singername})
+        message = TextSendMessage(text="新增喜愛的歌手 " + singername + " 已成功" )  
+      else:
+        message = TextSendMessage(text="歌手已在清單中...")           
+      line_bot_api.reply_message(event.reply_token, message)
+  elif event.message.text.startswith('delsinger'): 
+      split_array = event.message.text.split("~")
+      singername = split_array [1]
+      print('singername..', singername)
+      favorsingerList = ref.child(base_users_userId + userId + '/youtube_music/favorsinger').get()
+      if singername in favorsingerList: # 找到歌手名稱
+        favorsingerList.remove(singername) # 移除歌手名稱      
+        print('favorsingerList..', favorsingerList)
+        #重新寫入歌手清單
+        ref.child(base_users_userId + userId + '/youtube_music/favorsinger').set(favorsingerList)
+        message = TextSendMessage(text="刪除喜愛的歌手 " + singername + " 已成功" )  
+      else:
+        message = TextSendMessage(text="歌手不在清單中...")           
+      line_bot_api.reply_message(event.reply_token, message)          
+    # ----------------------------------------------------------------------       
   elif event.message.text == 'help':
       with open('help.txt', mode='r', encoding = "utf-8") as f:
         content = f.read()
