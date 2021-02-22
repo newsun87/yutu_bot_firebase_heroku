@@ -270,8 +270,8 @@ def handle_postback_message(event):
     userId = postBack_msg.split("~")[3]
     print(video_url, songname, userId, base_users_userId)
     if action == 'mqtt_publish':
-      #ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":songname})         
-      #ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
+      ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":songname})         
+      ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
       #print("歌曲 {videourl} 更新成功...".format(videourl=video_url)
       #client.publish("music/youtubeurl", userId +'~'+ video_url, 2, retain=True) #發佈訊息 
       #print("message published")
