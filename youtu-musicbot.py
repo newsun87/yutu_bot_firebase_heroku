@@ -49,6 +49,10 @@ handler = WebhookHandler(channel_secret)
 @app.route('/')
 def showPage():
  return render_template('index.html')
+ 
+@app.route('/music')
+def showMusicHelpPage():
+ return render_template('music.html')   
 
 @app.route('/getdata', methods=['GET', 'POST']) 
 def getData():
