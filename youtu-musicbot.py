@@ -400,7 +400,8 @@ def yt_search(video_keywords):
       youtube_url = f'{videoid}'      
       print(youtube_url)
       video_thumbnail = f'{videos[num]["封面照片"]}'
-      video_title = f'{videos[num]["影片名稱"]}' 
+      video_title = f'{videos[num]["影片名稱"]}'
+      print(youtube_url, video_thumbnail, video_title) 
       carousel_template_message = TemplateSendMessage(
           alt_text = '這是一個輪播模板',  # 通知訊息的名稱
           template = CarouselTemplate(
