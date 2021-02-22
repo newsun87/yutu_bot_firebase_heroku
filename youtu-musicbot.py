@@ -119,7 +119,7 @@ def handle_message(event):
       QuickReply_text_message = getQuickReply_music()      
       line_bot_api.reply_message(event.reply_token, QuickReply_text_message)
    # -------------------------------------------
-# --------------------------------------------------------------------------    
+   # ----喜愛歌手快速選單--------------------------    
   elif event.message.text == 'menu':
       QuickReply_text_message = TextSendMessage(
        text="點選你想要的功能",
@@ -154,55 +154,7 @@ def handle_message(event):
        )
       )
       line_bot_api.reply_message(event.reply_token, QuickReply_text_message) 
-  elif event.message.text == 'favor':
-      QuickReply_text_message = TextSendMessage(
-       text="點選你喜歡的歌手",
-       quick_reply = QuickReply(
-        items = [
-          QuickReplyButton(
-            action = MessageAction(label = "張惠妹", text = "我要聽歌手張惠妹的歌"),
-            image_url = 'https://i.imgur.com/0yjTHss.png'
-          ),
-          QuickReplyButton(
-            action = MessageAction(label = "張信哲", text = "我要聽歌手張信哲的歌"),
-            image_url = 'https://i.imgur.com/Q3lUQJa.png'
-          ),
-           QuickReplyButton(
-            action = MessageAction(label = "田馥甄", text = "我要聽歌手田馥甄的歌"),
-            image_url = 'https://i.imgur.com/0yjTHss.png'
-          ),
-          QuickReplyButton(
-            action = MessageAction(label = "鄧紫棋", text = "我要聽歌手鄧紫棋的歌"),
-            image_url = 'https://i.imgur.com/0yjTHss.png'
-          ),
-          QuickReplyButton(
-            action = MessageAction(label = "藍又時", text = "我要聽歌手藍又時的歌"),
-            image_url = 'https://i.imgur.com/0yjTHss.png'
-          ),
-          QuickReplyButton(
-            action = MessageAction(label = "李玖哲", text = "我要聽歌手李玖哲的歌"),
-            image_url = 'https://i.imgur.com/Q3lUQJa.png'
-          ),
-          QuickReplyButton(
-            action = MessageAction(label = "李玖哲", text = "我要聽歌手李玖哲的歌"),
-            image_url = 'https://i.imgur.com/sC1Xf98.png'
-          ),
-          QuickReplyButton(
-            action = MessageAction(label = "伍佰", text = "我要聽歌手伍佰的歌"),
-            image_url = 'https://i.imgur.com/sC1Xf98.png'
-          ),
-          QuickReplyButton(
-            action = MessageAction(label = "陳奕迅", text = "我要聽歌手陳奕迅的歌"),
-            image_url = 'https://i.imgur.com/sC1Xf98.png'
-          ),
-          QuickReplyButton(
-            action = MessageAction(label = "郁可唯", text = "我要聽歌手郁可唯的歌"),
-            image_url = 'https://i.imgur.com/0yjTHss.png'
-          )          
-        ]
-       )
-      )
-      line_bot_api.reply_message(event.reply_token, QuickReply_text_message)     
+     # ----------------------------------   
   elif event.message.text == 'help':
       with open('help.txt', mode='r', encoding = "utf-8") as f:
         content = f.read()
@@ -276,7 +228,7 @@ def musicplay(text):
         mqttmsg ='playpause'
         client.publish("music/pause_play", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息              
         print("message published")
-        message = TextSendMessage(text = nlu_text)
+        message = nlu_text
         return message         
 
     if action == 'adjust': #調整音量
@@ -309,7 +261,7 @@ def musicplay(text):
               mqttmsg = str(volume_num)               
               client.publish("music/volume", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息
          print('volume....', volume_num)      
-         message = TextSendMessage(text = nlu_text)
+         message = nlu_text
          return message                 
            
     if action == 'shutdown':            
@@ -369,7 +321,7 @@ def getQuickReply_music():
  # 動態加入歌手清單
   for key in range(len(singerList)):	
    items.append(QuickReplyButton(
-     action = MessageAction(label = singerList[key], text = "我要聽歌手"+singerList[key]+"的歌"),
+     action = MessageAction(label = singerList[key], text = "我要聽"+singerList[key]+"的歌"),
      image_url = 'https://i.imgur.com/0yjTHss.png'
    ))
             
@@ -392,7 +344,6 @@ client = mqtt.Client()
 client.on_connect = on_connect  
 client.on_message = on_message  
 client.connect("broker.mqttdashboard.com", 1883) 
-client.publish("volume", mqttmsg, 0, retain=False) #發佈訊息 
 client.loop_start()
 
 if __name__ == "__main__":           
