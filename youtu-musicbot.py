@@ -294,7 +294,8 @@ def musicplay(text):
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text) 
         songname = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
-        video_url = yt_search(songname)        
+        video_url = yt_search(songname)
+        ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":songname})         
         ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
         print("歌曲 {videourl} 更新成功...".format(videourl=video_url))      
         client.publish("music/youtubeurl", userId +'~'+ video_url, 2, retain=True) #發佈訊息 
@@ -308,7 +309,8 @@ def musicplay(text):
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text) 
         singername = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
-        video_url = yt_search(singername)        
+        video_url = yt_search(singername)
+        ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":singername})        
         ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
         print("歌曲 {videourl} 更新成功...".format(videourl=video_url))      
         client.publish("music/youtubeurl", userId +'~'+ video_url, 2, retain=True) #發佈訊息 
