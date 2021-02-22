@@ -309,7 +309,7 @@ def musicplay(text):
         time.sleep(1)
         client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息          
         message = nlu_text + '\n' + video_url       
-        return [TextSendMessage(text=message), message_list[0]]                                                                 
+        return message_list[0]                                                                
                
     if action == 'playsinger': #播放指定歌手
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -325,7 +325,7 @@ def musicplay(text):
         time.sleep(1)
         client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息         
         message = nlu_text + '\n' + video_url              
-        return [TextSendMessage(text=message), message_list[0]]                              
+        return message_list[0]                              
 
     if action == 'playpause': #播放暫停/繼續
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
