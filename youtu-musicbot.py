@@ -249,13 +249,14 @@ def handle_message(event):
         content = f.read()
         print(content)      
         line_bot_api.reply_message(
-         event.reply_token,
-         TextSendMessage(text=content))     
+          event.reply_token,
+          TextSendMessage(text=content)
+        )     
   else:             
       send_message = musicplay(event.message.text)
       line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=send_message)
+        send_message
       ) 
       
 def linenotify_menu():
@@ -321,8 +322,8 @@ def musicplay(text):
         print("message published")
         time.sleep(1)
         client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息         
-        message = nlu_text + '\n' + video_url       
-        return message                             
+        message = nlu_text + '\n' + video_url              
+        return TextSendMessage(text=message)                              
 
     if action == 'playpause': #播放暫停/繼續
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -331,7 +332,7 @@ def musicplay(text):
         client.publish("music/pause_play", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息              
         print("message published")
         message = nlu_text
-        return message         
+        return  TextSendMessage(text=message)        
 
     if action == 'adjust': #調整音量
          #userId = 'Ubf2b9f4188d45848fb4697d41c962591'
@@ -364,12 +365,7 @@ def musicplay(text):
               client.publish("music/volume", userId+'~'+ mqttmsg, 0, retain=False) #發佈訊息
          print('volume....', volume_num)      
          message = nlu_text + '至 ' + str(volume_num) + '%' 
-         return message                 
-           
-    if action == 'shutdown':            
-      nlu_text = temp['data']['nli'][0]['desc_obj']['result']      
-      mqttmsg = "shutdown"               
-      client.publish("shutdown", mqttmsg, 0, retain=False) #發佈訊息                
+         return TextSendMessage(text=message)                    
       
   else:
       nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -399,9 +395,37 @@ def yt_search(video_keywords):
       num = random.randint(0,len(videos))
       print(num)
       videoid = videos[num]['影片網址']
-      youtube_url = f'{videoid}'
-      print(youtube_url)    
-      return youtube_url
+      youtube_url = f'{videoid}'      
+      print(youtube_url)
+      video_thumbnail = videos[num]['封面照片']
+      video_title = videos[num]['影片名稱'] 
+      carousel_template_message = TemplateSendMessage(
+          alt_text = '我是一個輪播模板',  # 通知訊息的名稱
+          template = CarouselTemplate(
+            # culumns 是一個父親
+          columns = [
+                # 這是我第一個影片 
+                CarouselColumn(
+                    thumbnail_image_url = video_thumbnail,  # 呈現圖片
+                    title = video_title,  # 你要顯示的標題
+                    text = '',  # 你想問的問題或是敘述
+                    actions = [
+                        PostbackAction(
+                            label = '播放機播放',  # 顯示的文字
+                            display_text = '對不起，這不是我的',  # 回覆的文字
+                            data = 'action=buy&itemid=1'  # 取得資料？
+                        ),                        
+                        URIAction(
+                            label = '自行播放',  # 顯示的文字 
+                            uri = youtube_url   # 跳轉的url
+                        )
+                    ],
+                )
+           ]
+          )
+       )
+      message = youtube_url              
+      return TextSendMessage(text=message)  
 
 # Sent an HTML page with the top ten videos
 def video_filter(api_video):
@@ -421,12 +445,11 @@ def getQuickReply_music():
   singerList = ref.child(base_users_userId + userId + '/youtube_music/favorsinger').get() 
   items = []
  # 動態加入歌手清單
-  for key in range(len(singerList)):	
+  for key in range(len(singerList)):
    items.append(QuickReplyButton(
      action = MessageAction(label = singerList[key], text = "我要聽"+singerList[key]+"的歌"),
      image_url = 'https://i.imgur.com/0yjTHss.png'
-   ))
-            
+   ))            
   QuickReply_text_message = TextSendMessage(
      text="點選你喜歡的音樂",
      quick_reply = QuickReply(        
