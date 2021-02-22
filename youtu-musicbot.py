@@ -93,8 +93,11 @@ def showRegister():
         users_userId_ref.update({'LineNotify':'{access_token}'.format(access_token=linenotify_access_token)})
         return '<html><h1>LineNotify 連動設定成功....</h1></html>' 
       else:
-        return '<html><h1>LineNotify 連動已設定....</h1></html>'   
-
+        return '<html><h1>LineNotify 連動已設定....</h1></html>' 
+          
+@app.route('/goal',methods=['GET','POST'])    
+def goal():
+   return render_template("goal.html")
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -119,7 +122,14 @@ def handle_message(event):
   global userId, nlu_text 
   ref = db.reference('/') # 參考路徑 
   userId = event.source.user_id   
-  users_userId_ref = ref.child('youtube_music/'+ userId)  
+  #users_userId_ref = ref.child('youtube_music/'+ userId) 
+  profile = line_bot_api.get_profile(userId)# 呼叫取得用戶資訊 API
+  print('profile...',profile)  
+  #---判斷用戶是否有註冊 LINE Notify---------------    
+  if ref.child(base_users_userId+userId+'/profile/LineNotify').get()==None:   
+   buttons_template_message = linenotify_menu()
+   line_bot_api.reply_message(event.reply_token, buttons_template_message) 
+   #------------------------------------    
 # -----雲端音樂功能的指令-------------- 
   # ----播放影片網址---------  
   if event.message.text.startswith('【youtube url】'):
@@ -242,14 +252,25 @@ def handle_message(event):
       line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=send_message)
-      )           
+      ) 
+      
+def linenotify_menu():
+    buttons_template_message = TemplateSendMessage(
+         alt_text = '我是LineNotify連動設定按鈕選單模板',
+         template = ButtonsTemplate(
+            thumbnail_image_url = 'https://i.imgur.com/he05XcJ.png', 
+            title = 'LineNotify 連動設定選單',  # 你的標題名稱
+            text = '請選擇：',  # 你要問的問題，或是文字敘述            
+            actions = [ # action 最多只能4個喔！
+                URIAction(
+                    label = 'LineNotify 連動設定', # 在按鈕模板上顯示的名稱
+                    uri = 'https://liff.line.me/1654118646-p8bGlZy2'  # 跳轉到的url，看你要改什麼都行，只要是url                    
+                )
+            ]
+         )
+        )
+    return buttons_template_message            
             
-def random_int_list(num):
-  list = range(1, num)
-  random_list = [*list]
-  random.shuffle(random_list)
-  return random_list
-
 def musicplay(text):
   global nlu_text, songnum, songkind, client, genUrl_state, volume_num	
   cmd = './olami-nlu-api-test.sh https://tw.olami.ai/cloudservice/api 8bd057135ec8432bb7bd2b2caa510aca 3fd33f86b57642c08fbea22f8eb9132d %s'     
