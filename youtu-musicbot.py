@@ -432,7 +432,7 @@ def yt_search(video_keywords, userId):
                     actions = [
                         PostbackAction(
                             label = '播放器播放',  # 顯示的文字                           
-                            data = 'mqtt_publish~{youtube_url}~{video_keywords}~{userId}'  # 取得資料？
+                            data = f"mqtt_publish~{youtube_url}~{video_keywords}~{userId}"  # 取得資料？
                         ),                        
                         URIAction(
                             label = '本機播放',  # 顯示的文字 
