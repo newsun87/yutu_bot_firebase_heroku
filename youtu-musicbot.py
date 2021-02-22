@@ -410,7 +410,7 @@ def yt_search(video_keywords):
                CarouselColumn(
                     thumbnail_image_url = video_thumbnail,  # 呈現圖片
                     title = 'test',  # 你要顯示的標題
-                    text = 'test',  # 你想問的問題或是敘述
+                    text = '',  # 你想問的問題或是敘述
                     actions = [
                         PostbackAction(
                             label = '播放器播放',  # 顯示的文字                           
