@@ -415,7 +415,7 @@ def yt_search(video_keywords, userId):
       videos = list(map(video_filter, items)) 
       carouselitems = []
      # 動態加入歌手清單
-  """ item_len = len(videos)
+  ''' item_len = len(videos)
       carouselitems_len = 1
       for key in range(carouselitems_len):
          youtube_url = f'{videos[key]["影片網址"]}'      
@@ -445,7 +445,7 @@ def yt_search(video_keywords, userId):
           # culumns 是一個父親
           colums = carouselitems         
        )
-     ) """        
+     ) '''       
       num = random.randint(0,len(videos))
       print(num)
       youtube_url = f'{videos[num]["影片網址"]}'      
