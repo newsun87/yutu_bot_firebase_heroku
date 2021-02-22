@@ -41,6 +41,30 @@ mqttmsg = volume +'%'
 base_users_userId  = 'smarthome-bot/'
 ref = db.reference('/') # 參考路徑 
 
+def get_access_token(autho_code):
+     url = 'https://notify-bot.line.me/oauth/token'	
+     payload = {'grant_type': 'authorization_code',
+                 'code': autho_code, 
+	             'redirect_uri':host+'/register', 
+	             'client_id':'RsTuQZObEzJHPBU59HKhCI',
+	             'client_secret': 'My9RHffhEkSyJtZecod84GSoGsQT4gfCpFzP4ZC3KTL'}
+     headers = {'content-type': 'application/x-www-form-urlencoded'} 
+     try:     
+       r = requests.post(url, data=payload, headers=headers) # 回應為 JSON 字串
+       print('r.text...',r.text) 
+     except exceptions.Timeout as e:
+        print('请求超时：'+str(e.message))
+     except exceptions.HTTPError as e:
+        print('http请求错误:'+str(e.message))
+     else:       
+        if r.status_code == 200:          			
+          json_obj = json.loads(r.text) # 轉成 json 物件
+          access_token = json_obj['access_token']
+          print('access_token:', json_obj['access_token'])          
+          return access_token            
+        else:
+           return 'error'
+
 app = Flask(__name__)
 
 line_bot_api = LineBotApi(access_token)
@@ -52,14 +76,24 @@ def showPage():
  
 @app.route('/music')
 def showMusicHelpPage():
- return render_template('music.html')   
-
-@app.route('/getdata', methods=['GET', 'POST']) 
-def getData():
-  with open('record.txt','r', encoding = "utf-8") as fileobj:
-    word = fileobj.read().strip('\n')
-    print(word)  
-  return word
+ return render_template('music.html') 
+ 
+@app.route('/register', methods=['GET', 'POST']) 
+def showRegister():    
+    ref = db.reference('/') # 參考路徑    
+    if request.method=='GET':
+      userId = request.args.get('state')  
+      if userId != None:          
+        autho_code = request.args.get('code') #取得 LineNotify 驗證碼
+        time.sleep(1)
+        linenotify_access_token = get_access_token(autho_code) #取得存取碼
+        #access_token = linenotify_access_token
+        print('linenotify_access_token...', linenotify_access_token)               
+        users_userId_ref = ref.child('smarthome-bot/'+ userId +'/profile')        
+        users_userId_ref.update({'LineNotify':'{access_token}'.format(access_token=linenotify_access_token)})
+        return '<html><h1>LineNotify 連動設定成功....</h1></html>' 
+      else:
+        return '<html><h1>LineNotify 連動已設定....</h1></html>'   
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
