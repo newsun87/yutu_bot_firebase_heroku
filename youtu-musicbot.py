@@ -431,7 +431,7 @@ def yt_search(video_keywords):
         youtube_url 
       ]
       
-      return carousel_template_message 
+      return  yt_search_message 
 
 # Sent an HTML page with the top ten videos
 def video_filter(api_video):
