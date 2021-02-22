@@ -438,15 +438,14 @@ def yt_search(video_keywords, userId):
           actions = [
             PostbackAction(
              label = '播放器播放',  # 顯示的文字                           
-             data = f"mqtt_publish~{youtube_url}~{video_keywords}~{userId}"  # 取得資料？
+             data = f"mqtt_publish~{youtube_url}~{video_keywords}~{userId}"  # 取得控制資料
             ),                        
             URIAction(
              label = '本機播放',  # 顯示的文字 
              uri = youtube_url   # 跳轉的url
             )
            ]                         
-        ))
-      print(items)  
+        ))        
       carousel_template_message = TemplateSendMessage(
         alt_text = '這是一個輪播模板',  # 通知訊息的名稱
         template = CarouselTemplate(
