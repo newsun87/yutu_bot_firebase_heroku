@@ -415,7 +415,9 @@ def yt_search(video_keywords, userId):
       videos = list(map(video_filter, items)) 
       items = []
      # 動態加入歌手清單
-      for key in range(len(videos)):
+      #item_len = len(videos)
+      item_len = 1
+      for key in range(item_len):
          youtube_url = f'{videos[key]["影片網址"]}'      
          print(youtube_url)
          video_thumbnail = f'{videos[key]["封面照片"]}'
