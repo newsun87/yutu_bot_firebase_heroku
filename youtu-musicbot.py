@@ -452,10 +452,10 @@ def video_filter(api_video):
 def handle_postback_message(event):
     postBack_msg = event.postback.data
     print('poskback......', postBack)
-    action= postBack_msg.split("~", 3)[0]
-    video_url = postBack_msg.split("~", 3)[1]
-    songname = postBack_msg.split("~", 3)[2]
-    userId = postBack_msg.split("~", 3)[3]
+    action= postBack_msg.split("~")[0]
+    video_url = postBack_msg.split("~")[1]
+    songname = postBack_msg.split("~")[2]
+    userId = postBack_msg.split("~")[3]
     print(video_url, songname)
     if action == 'mqtt_publish':
        ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":songname})         
