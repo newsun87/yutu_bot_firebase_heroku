@@ -118,6 +118,14 @@ def handle_message(event):
       time.sleep(1)
       client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息       
    # -----------------------------------------------------------------------
+   # ------顯示目前影片的資訊------------------
+  elif event.message.text == '歌曲資訊':      
+      users_userId_ref = ref.child(base_users_userId + userId + '/youtube_music/')
+      videourl = users_userId_ref.get()['videourl']   	        
+      line_bot_api.reply_message(
+      event.reply_token,
+      TextSendMessage(text="歌曲資訊 " + videourl)) 
+   # -----------------------------------------------------------------------
    # ------顯示喜愛歌手的快速選單------------------      
   elif event.message.text == 'favor':
       QuickReply_text_message = getQuickReply_music()      
@@ -134,13 +142,13 @@ def handle_message(event):
             image_url = 'https://i.imgur.com/iIZYTVw.png'
           ),
           QuickReplyButton(
+            action = MessageAction(label = "歌曲資訊", text = "停止播放"),
+            image_url = 'https://i.imgur.com/PEHPvG8.png'
+          ),       
+          QuickReplyButton(
             action = MessageAction(label = "停止播放", text = "停止播放"),
             image_url = 'https://i.imgur.com/PEHPvG8.png'
-          ),
-           QuickReplyButton(
-            action = MessageAction(label = "音樂播放", text = "music_play"),
-            image_url = 'https://i.imgur.com/W1jVNlS.png'
-          ),
+          ),           
           QuickReplyButton(
             action = MessageAction(label = "音量大聲", text = "音量大聲一點"),
             image_url = 'https://i.imgur.com/jPHUkGZ.png'
