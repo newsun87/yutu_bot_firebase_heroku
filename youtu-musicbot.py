@@ -263,7 +263,7 @@ def handle_message(event):
 @handler.add(PostbackEvent)
 def handle_postback_message(event):
     postBack_msg = event.postback.data
-    print('poskback......', postBack)
+    print('poskback......', postBack_msg)
     action= postBack_msg.split("~")[0]
     video_url = postBack_msg.split("~")[1]
     songname = postBack_msg.split("~")[2]
