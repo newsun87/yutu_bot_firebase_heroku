@@ -82,7 +82,8 @@ def handle_message(event):
   ref = db.reference('/') # 參考路徑 
   userId = event.source.user_id   
   users_userId_ref = ref.child('youtube_music/'+ userId)  
-  # -----雲端音樂 quickreply 的指令操作-------------- 
+# -----雲端音樂功能的指令-------------- 
+  # ----播放影片網址---------  
   if event.message.text.startswith('【youtube url】'):
       new_message = event.message.text.lstrip('【youtube url】')
       ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":videourl})
@@ -112,7 +113,13 @@ def handle_message(event):
       client.publish("music/youtubeurl", userId +'~'+ event.message.text, 2, retain=True) #發佈訊息
       time.sleep(1)
       client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息       
-# -----------------------------------------------------------------------
+   # -----------------------------------------------------------------------
+   # ------顯示喜愛歌手的快速選單------------------      
+  elif event.message.text == 'favor':
+      QuickReply_text_message = getQuickReply_music()      
+      line_bot_api.reply_message(event.reply_token, QuickReply_text_message)
+   # -------------------------------------------
+# --------------------------------------------------------------------------    
   elif event.message.text == 'menu':
       QuickReply_text_message = TextSendMessage(
        text="點選你想要的功能",
@@ -356,7 +363,24 @@ def video_filter(api_video):
             '封面照片':thumbnails
   }
   
-
+def getQuickReply_music():	 
+  singerList = ref.child(base_users_userId + userId + '/youtube_music/favorsinger').get() 
+  items = []
+ # 動態加入歌手清單
+  for key in range(len(singerList)):	
+   items.append(QuickReplyButton(
+     action = MessageAction(label = singerList[key], text = "我要聽歌手"+singerList[key]+"的歌"),
+     image_url = 'https://i.imgur.com/0yjTHss.png'
+   ))
+            
+  QuickReply_text_message = TextSendMessage(
+     text="點選你喜歡的音樂",
+     quick_reply = QuickReply(        
+         items 
+     )
+   )
+  return QuickReply_text_message
+  
 def on_connect(client, userdata, flags, rc):  
     print("Connected with result code "+str(rc))
     client.subscribe("genurl", 0)    
