@@ -406,26 +406,31 @@ def yt_search(video_keywords):
           template = CarouselTemplate(
             # culumns 是一個父親
           columns = [
-                # 這是我第一個影片 
+                # 這是我第一個兒子 
                 CarouselColumn(
-                    thumbnail_image_url = video_thumbnail,  # 呈現圖片
-                    title = video_title,  # 你要顯示的標題
-                    text = '',  # 你想問的問題或是敘述
+                    thumbnail_image_url = 'https://i.imgur.com/GDsd8KJ.jpg',  # 呈現圖片
+                    title = '這是一隻貓頭鷹',  # 你要顯示的標題
+                    text = '想養嗎？',  # 你想問的問題或是敘述
                     actions = [
                         PostbackAction(
-                            label = '播放機播放',  # 顯示的文字
+                            label = '養',  # 顯示的文字
                             display_text = '對不起，這不是我的',  # 回覆的文字
                             data = 'action=buy&itemid=1'  # 取得資料？
-                        ),                        
+                        ),
+                        MessageAction(
+                            label = '不養',  # 顯示的文字 
+                            text = '好喔！沒問題'  # 回覆的文字
+                        ),
                         URIAction(
-                            label = '自行播放',  # 顯示的文字 
-                            uri = youtube_url   # 跳轉的url
+                            label = '這是我的網址',  # 顯示的文字 
+                            uri = 'http://shareboxnow.com/'   # 跳轉的url
                         )
-                    ],
-                )
+                    ]
+                ),            
            ]
-          )
        )
+     )      
+      
       yt_search_message = [
         carousel_template_message, 
         youtube_url 
