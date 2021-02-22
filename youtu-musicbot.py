@@ -455,7 +455,7 @@ def handle_postback_message(event):
     action= postBack_msg.split("~", 3)[0]
     video_url = postBack_msg.split("~", 3)[1]
     songname = postBack_msg.split("~", 3)[2]
-    userId = postBack_msg.split("~", 3)[2]
+    userId = postBack_msg.split("~", 3)[3]
     print(video_url, songname)
     if action == 'mqtt_publish':
        ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":songname})         
