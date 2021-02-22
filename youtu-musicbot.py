@@ -413,9 +413,9 @@ def yt_search(video_keywords, userId):
       return 'Error: No YouTube results'
     else:
       videos = list(map(video_filter, items)) 
-      carouselitems = []
+     """ carouselitems = []
      # 動態加入歌手清單
-      #item_len = len(videos)
+      item_len = len(videos)
       carouselitems_len = 1
       for key in range(carouselitems_len):
          youtube_url = f'{videos[key]["影片網址"]}'      
@@ -445,38 +445,38 @@ def yt_search(video_keywords, userId):
           # culumns 是一個父親
           colums = carouselitems         
        )
-     )         
+     ) """        
       num = random.randint(0,len(videos))
       print(num)
       youtube_url = f'{videos[num]["影片網址"]}'      
       print(youtube_url)
-     # video_thumbnail = f'{videos[num]["封面照片"]}'
-     # video_title = f'{videos[num]["影片名稱"]}'
-     # print(youtube_url, video_thumbnail, video_title) 
-     # carousel_template_message = TemplateSendMessage(
-     #     alt_text = '這是一個輪播模板',  # 通知訊息的名稱
-     #     template = CarouselTemplate(
-          # culumns 是一個父親
-     #     colums = carouselitems
-          #columns = [
-           #    CarouselColumn(
-            #        thumbnail_image_url = video_thumbnail,  # 呈現圖片
-             #       title = video_keywords,  # 你要顯示的標題
-              #      text = '直接點選...',  # 你想問的問題或是敘述
-               #     actions = [
-                #        PostbackAction(
-                 #           label = '播放器播放',  # 顯示的文字                           
-                  #          data = f"mqtt_publish~{youtube_url}~{video_keywords}~{userId}"  # 取得資料？
-                   #     ),                        
-                    #    URIAction(
-                     #       label = '本機播放',  # 顯示的文字 
-                      #      uri = youtube_url   # 跳轉的url
-                       # )
-                    #]
-              #  ),            
-          # ]
-      # )
-     #)      
+      video_thumbnail = f'{videos[num]["封面照片"]}'
+      video_title = f'{videos[num]["影片名稱"]}'
+      print(youtube_url, video_thumbnail, video_title) 
+      carousel_template_message = TemplateSendMessage(
+          alt_text = '這是一個輪播模板',  # 通知訊息的名稱
+          template = CarouselTemplate(
+         # culumns 是一個父親
+          #colums = carouselitems
+          columns = [
+               CarouselColumn(
+                   thumbnail_image_url = video_thumbnail,  # 呈現圖片
+                   title = video_keywords,  # 你要顯示的標題
+                   text = '直接點選...',  # 你想問的問題或是敘述
+                   actions = [
+                     PostbackAction(
+                       label = '播放器播放',  # 顯示的文字                           
+                       data = f"mqtt_publish~{youtube_url}~{video_keywords}~{userId}"  # 取得資料？
+                     ),                        
+                     URIAction(
+                       label = '本機播放',  # 顯示的文字 
+                       uri = youtube_url   # 跳轉的url
+                     )
+                    ]
+                ),            
+           ]
+       )
+     )      
       
       yt_search_message = [
         carousel_template_message, 
