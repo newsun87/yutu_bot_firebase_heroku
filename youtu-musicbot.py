@@ -414,7 +414,7 @@ def yt_search(video_keywords):
                     actions = [
                         PostbackAction(
                             label = '播放器播放',  # 顯示的文字                           
-                            data = 'action=buy&itemid=1'  # 取得資料？
+                            data = 'mqtt_publish~{youtube_url}~{video_keywords}'  # 取得資料？
                         ),                        
                         URIAction(
                             label = '本機播放',  # 顯示的文字 
@@ -446,7 +446,24 @@ def video_filter(api_video):
             '影片網址': url,
             '封面照片':thumbnails
   }
-  
+
+# 處理 postback 事件
+@handler.add(PostbackEvent)
+def handle_postback_message(event):
+    postBack_msg = event.postback.data
+    print('poskback......', postBack)
+    action= postBack_msg.split("~", 2)[0]
+    video_url = postBack_msg.split("~", 2)[1]
+    songname = postBack_msg.split("~", 2)[2]
+    print(video_url, songname)
+    if action == 'mqtt_publish':
+       ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":songname})         
+       ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
+       print("歌曲 {videourl} 更新成功...".format(videourl=video_url)
+       client.publish("music/youtubeurl", userId +'~'+ video_url, 2, retain=True) #發佈訊息 
+       print("message published")
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=video_url)) 
+ 
 def getQuickReply_music():	 
   singerList = ref.child(base_users_userId + userId + '/youtube_music/favorsinger').get() 
   items = []
