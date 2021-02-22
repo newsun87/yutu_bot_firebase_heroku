@@ -413,9 +413,9 @@ def yt_search(video_keywords, userId):
       return 'Error: No YouTube results'
     else:
       videos = list(map(video_filter, items)) 
-     """ carouselitems = []
+      carouselitems = []
      # 動態加入歌手清單
-      item_len = len(videos)
+  """ item_len = len(videos)
       carouselitems_len = 1
       for key in range(carouselitems_len):
          youtube_url = f'{videos[key]["影片網址"]}'      
