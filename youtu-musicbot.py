@@ -409,7 +409,7 @@ def yt_search(video_keywords):
           columns = [
                CarouselColumn(
                     thumbnail_image_url = video_thumbnail,  # 呈現圖片
-                    title = video_title,  # 你要顯示的標題
+                    title = 'test',  # 你要顯示的標題
                     text = '可以直接操作',  # 你想問的問題或是敘述
                     actions = [
                         PostbackAction(
