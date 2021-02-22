@@ -308,7 +308,7 @@ def musicplay(text):
         time.sleep(1)
         client.publish("music/youtubeurl", '', 2, retain=True) #發佈訊息          
         message = nlu_text + '\n' + video_url       
-        return message                                                                   
+        return TextSendMessage(text=message)                                                                  
                
     if action == 'playsinger': #播放指定歌手
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
@@ -424,8 +424,8 @@ def yt_search(video_keywords):
            ]
           )
        )
-      message = youtube_url              
-      return TextSendMessage(text=message)  
+      
+      return youtube_url  
 
 # Sent an HTML page with the top ten videos
 def video_filter(api_video):
