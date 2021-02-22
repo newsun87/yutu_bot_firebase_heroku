@@ -142,7 +142,7 @@ def handle_message(event):
             image_url = 'https://i.imgur.com/iIZYTVw.png'
           ),
           QuickReplyButton(
-            action = MessageAction(label = "歌曲資訊", text = "停止播放"),
+            action = MessageAction(label = "歌曲資訊", text = "歌曲資訊"),
             image_url = 'https://i.imgur.com/PEHPvG8.png'
           ),       
           QuickReplyButton(
