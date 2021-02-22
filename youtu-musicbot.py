@@ -433,7 +433,8 @@ def yt_search(video_keywords, userId):
         print(youtube_url, video_thumbnail, video_title)        
         items.append(CarouselColumn(         
           thumbnail_image_url = video_thumbnail,  # 呈現圖片
-          title = video_keywords,  # 你要顯示的標題
+          #title = video_keywords,  # 你要顯示的標題
+          title = video_title,
           text = '直接點選...',  # 你想問的問題或是敘述
           actions = [
             PostbackAction(
