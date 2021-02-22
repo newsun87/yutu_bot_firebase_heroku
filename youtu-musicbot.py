@@ -461,7 +461,7 @@ def handle_postback_message(event):
        ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":songname})         
        ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
        print("歌曲 {videourl} 更新成功...".format(videourl=video_url)
-       client.publish("music/youtubeurl", userId +'~'+ video_url, 2, retain=True) #發佈訊息 
+       #client.publish("music/youtubeurl", userId +'~'+ video_url, 2, retain=True) #發佈訊息 
        print("message published")
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=video_url)) 
  
