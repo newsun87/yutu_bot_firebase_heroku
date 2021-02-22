@@ -192,7 +192,11 @@ def handle_message(event):
           QuickReplyButton(
             action = MessageAction(label = "停止播放", text = "停止播放"),
             image_url = 'https://i.imgur.com/PEHPvG8.png'
-          ),           
+          ), 
+          QuickReplyButton(
+            action = MessageAction(label = "音量適中", text = "音量適中"),
+            image_url = 'https://i.imgur.com/jPHUkGZ.png'
+          ),          
           QuickReplyButton(
             action = MessageAction(label = "音量大聲", text = "音量大聲一點"),
             image_url = 'https://i.imgur.com/jPHUkGZ.png'
