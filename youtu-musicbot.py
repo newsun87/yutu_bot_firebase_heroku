@@ -299,7 +299,7 @@ def musicplay(text):
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text) 
         songname = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
-        message_list = yt_search(songname)
+        message_list = yt_search(songname, userId)
         video_url = message_list[1]
         ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":songname})         
         ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
@@ -315,7 +315,7 @@ def musicplay(text):
         nlu_text = temp['data']['nli'][0]['desc_obj']['result']
         print('nlu', nlu_text) 
         singername = temp['data']['nli'][0]['semantic'][0]['slots'][0]['value']       
-        message_list = yt_search(singername)
+        message_list = yt_search(singername, userId)
         video_url = message_list[1]
         ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":singername})        
         ref.child(base_users_userId + userId + '/youtube_music/').update({"videourl":video_url})
@@ -378,7 +378,7 @@ def musicplay(text):
 KEY = 'AIzaSyCXdlB7xy9F2YJn7sYsNkmA4dE3PvbHVhw'
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'  
-def yt_search(video_keywords):
+def yt_search(video_keywords, userId):
     youtube = build('youtube', 'v3', developerKey=KEY)
 
     # Get YouTube API results
@@ -414,7 +414,7 @@ def yt_search(video_keywords):
                     actions = [
                         PostbackAction(
                             label = '播放器播放',  # 顯示的文字                           
-                            data = 'mqtt_publish~{youtube_url}~{video_keywords}'  # 取得資料？
+                            data = 'mqtt_publish~{youtube_url}~{video_keywords}~{userId}'  # 取得資料？
                         ),                        
                         URIAction(
                             label = '本機播放',  # 顯示的文字 
@@ -452,9 +452,10 @@ def video_filter(api_video):
 def handle_postback_message(event):
     postBack_msg = event.postback.data
     print('poskback......', postBack)
-    action= postBack_msg.split("~", 2)[0]
-    video_url = postBack_msg.split("~", 2)[1]
-    songname = postBack_msg.split("~", 2)[2]
+    action= postBack_msg.split("~", 3)[0]
+    video_url = postBack_msg.split("~", 3)[1]
+    songname = postBack_msg.split("~", 3)[2]
+    userId = postBack_msg.split("~", 3)[2]
     print(video_url, songname)
     if action == 'mqtt_publish':
        ref.child(base_users_userId + userId + '/youtube_music/').update({"songkind":songname})         
