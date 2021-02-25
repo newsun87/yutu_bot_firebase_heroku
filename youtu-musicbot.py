@@ -439,7 +439,7 @@ def yt_search(video_keywords, userId):
       return  yt_search_message 
 
 def gen_carouseltemplate_items(videos):
-   items = []
+      items = []
     # 動態加入影片清單
       for key in range(len(videos)):
         youtube_url = f'{videos[key]["影片網址"]}'      
