@@ -423,9 +423,25 @@ def yt_search(video_keywords, userId):
       video_thumbnail = f'{videos[num]["封面照片"]}'
       video_title = f'{videos[num]["影片名稱"]}'
       print(youtube_url, video_thumbnail, video_title) 
-      items = []
+      items = gen_carouseltemplate_items(videos)      
+      carousel_template_message = TemplateSendMessage(
+        alt_text = '這是一個輪播模板',  # 通知訊息的名稱
+        template = CarouselTemplate(
+           columns = items
+       )
+     )      
+      
+      yt_search_message = [
+        carousel_template_message, 
+        youtube_url 
+      ]
+      
+      return  yt_search_message 
+
+def gen_carouseltemplate_items(videos):
+   items = []
     # 動態加入影片清單
-      for key in range(len(videos)):	
+      for key in range(len(videos)):
         youtube_url = f'{videos[key]["影片網址"]}'      
         print(youtube_url)
         video_thumbnail = f'{videos[key]["封面照片"]}'
@@ -446,20 +462,7 @@ def yt_search(video_keywords, userId):
             )
            ]                         
         ))        
-      carousel_template_message = TemplateSendMessage(
-        alt_text = '這是一個輪播模板',  # 通知訊息的名稱
-        template = CarouselTemplate(
-           columns = items
-       )
-     )      
-      
-      yt_search_message = [
-        carousel_template_message, 
-        youtube_url 
-      ]
-      
-      return  yt_search_message 
-
+  
 # Sent an HTML page with the top ten videos
 def video_filter(api_video):
   title = api_video['snippet']['title']         
