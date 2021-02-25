@@ -414,8 +414,7 @@ def yt_search(video_keywords, userId):
     else:
       videos = list(map(video_filter, items)) 
       carouselitems = []
-     # 動態加入歌手清單
-  
+     # 動態加入歌手清單  
       num = random.randint(0,len(videos))
       print(num)
       youtube_url = f'{videos[num]["影片網址"]}'      
@@ -461,7 +460,8 @@ def gen_carouseltemplate_items(videos, video_keywords):
              uri = youtube_url   # 跳轉的url
             )
            ]                         
-        ))        
+        ))
+      return items          
   
 # Sent an HTML page with the top ten videos
 def video_filter(api_video):
